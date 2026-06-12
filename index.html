@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ===== SETUP ZONE: invisible stuff ===== -->
+  <!-- ===== SETUP ZONE ===== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- The text that shows in the browser tab -->
-  <title>Tether — coming soon</title>
+  <title>Tether — a foster-first platform for Houston's shelter dogs</title>
+  <meta name="description" content="Tether matches Houston shelter dogs with the fosters who fit them. Launching soon.">
 
-  <!-- What Google and link previews show as the description -->
-  <meta name="description" content="Tether — a foster-first platform connecting dogs with homes that fit them. Launching in Houston.">
+  <!-- The little dog icon in the browser tab -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
 
-  <!-- Loading the Fraunces font from Google Fonts -->
+  <!-- Fraunces from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
 
-  <!-- ===== STYLE ZONE: all the visual rules ===== -->
+  <!-- ===== STYLE ZONE ===== -->
   <style>
-    /* Reset: clears browser default spacing so we start clean */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* The whole page: cream background, centers everything */
     body {
       background: #faf8f2;
       color: #2a2e2a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Fraunces for all headings */
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+
+    /* ----- HERO SECTION (top of page) ----- */
+    .hero {
+      min-height: 88vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-    }
-
-    /* The content block in the middle */
-    .card {
-      max-width: 560px;
       text-align: center;
+      padding: 48px 24px;
     }
+    .hero-inner { max-width: 640px; }
 
-    /* The small green pill above the wordmark */
     .pill {
       display: inline-block;
       background: #c2edca;
@@ -51,33 +52,27 @@
       margin-bottom: 28px;
     }
 
-    /* The big "Tether" wordmark — uses Fraunces */
     h1 {
-      font-family: "Fraunces", serif;
       font-weight: 700;
       font-size: 64px;
       letter-spacing: -1px;
       margin-bottom: 16px;
     }
 
-    /* The mission statement line — also Fraunces */
     .mission {
       font-family: "Fraunces", serif;
       font-weight: 600;
-      font-size: 24px;
+      font-size: 26px;
       line-height: 1.35;
       margin-bottom: 20px;
     }
 
-    /* The smaller paragraph under the mission */
     .sub {
-      font-size: 16px;
-      line-height: 1.6;
+      font-size: 17px;
       color: #4a504a;
       margin-bottom: 32px;
     }
 
-    /* The email contact link styled as a button */
     .contact {
       display: inline-block;
       background: #c2edca;
@@ -88,43 +83,187 @@
       padding: 14px 28px;
       border-radius: 999px;
     }
+    .contact:hover { background: #aedcb8; }
 
-    /* Button hover effect: darkens slightly when mouse is over it */
-    .contact:hover {
-      background: #aedcb8;
+    /* ----- FOUR DOORS SECTION ----- */
+    .doors {
+      background: #f3efe5;
+      padding: 72px 24px;
+    }
+    .doors-inner { max-width: 880px; margin: 0 auto; }
+
+    .doors h2 {
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .doors-sub {
+      text-align: center;
+      color: #4a504a;
+      margin-bottom: 40px;
     }
 
-    /* The tiny footer line at the bottom */
+    .door-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .door {
+      background: #faf8f2;
+      border-radius: 16px;
+      padding: 28px 24px;
+    }
+    .door h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .door p {
+      font-size: 14px;
+      color: #4a504a;
+    }
+    /* The small "coming" tag on each door */
+    .soon {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #6a706a;
+      border: 1px solid #d8d4c8;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    /* ----- WHY SECTION (dark) ----- */
+    .why {
+      background: #2a2e2a;
+      color: #faf8f2;
+      padding: 72px 24px;
+      text-align: center;
+    }
+    .why-inner { max-width: 640px; margin: 0 auto; }
+    .why h2 {
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #faf8f2;
+    }
+    .why p {
+      font-size: 17px;
+      color: #d4d8d2;
+      margin-bottom: 16px;
+    }
+    .why .accent { color: #c2edca; font-weight: 600; }
+
+    /* ----- CLOSING CTA ----- */
+    .closing {
+      background: #c2edca;
+      padding: 72px 24px;
+      text-align: center;
+    }
+    .closing h2 {
+      font-size: 34px;
+      font-weight: 700;
+      color: #1f3a25;
+      margin-bottom: 12px;
+    }
+    .closing p {
+      color: #2a2e2a;
+      margin-bottom: 28px;
+    }
+    .closing .contact {
+      background: #2a2e2a;
+      color: #faf8f2;
+    }
+    .closing .contact:hover { background: #1a1d1a; }
+
+    /* ----- FOOTER ----- */
     .footer {
-      margin-top: 48px;
-      font-size: 13px;
+      background: #2a2e2a;
       color: #8a908a;
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 13px;
     }
 
-    /* On small screens (phones), shrink the big text */
+    /* ----- MOBILE SIZING ----- */
     @media (max-width: 480px) {
-      h1 { font-size: 48px; }
-      .mission { font-size: 20px; }
+      h1 { font-size: 46px; }
+      .mission { font-size: 21px; }
+      .doors h2, .why h2, .closing h2 { font-size: 27px; }
+      .hero { min-height: 70vh; }
     }
   </style>
 </head>
 
 <body>
-  <!-- ===== VISIBLE ZONE: everything on the page ===== -->
-  <div class="card">
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="pill">Launching in Houston</div>
+      <h1>Tether</h1>
+      <p class="mission">A foster-first platform connecting dogs with homes that fit them.</p>
+      <p class="sub">We're building a smarter way to match shelter dogs with the fosters who fit them — so fewer dogs run out of time waiting for the right home.</p>
+      <a class="contact" href="mailto:hello@tether.dog">Follow along → hello@tether.dog</a>
+    </div>
+  </div>
 
-    <div class="pill">Launching in Houston</div>
+  <!-- ===== FOUR DOORS ===== -->
+  <div class="doors">
+    <div class="doors-inner">
+      <h2>One platform. Four doors.</h2>
+      <p class="doors-sub">Whoever you are in a dog's story, Tether is being built for you.</p>
+      <div class="door-grid">
 
-    <h1>Tether</h1>
+        <div class="door">
+          <div class="soon">Coming</div>
+          <h3>I'm a shelter</h3>
+          <p>One dashboard for your dogs, your fosters, and your matches — with urgent broadcasts when a dog needs out fast.</p>
+        </div>
 
-    <p class="mission">A foster-first platform connecting dogs with homes that fit them.</p>
+        <div class="door">
+          <div class="soon">Coming</div>
+          <h3>I've fostered before</h3>
+          <p>Quick signup. Tell us what fits your home, and a shelter reaches out when there's a dog who matches.</p>
+        </div>
 
-    <p class="sub">We're building a smarter way to match shelter dogs with the fosters who fit them — so fewer dogs run out of time waiting for the right home.</p>
+        <div class="door">
+          <div class="soon">Coming</div>
+          <h3>I want to foster, but I'm new</h3>
+          <p>Honest answers about what fostering actually involves — cost, time, what happens if it doesn't work out — then a path to start.</p>
+        </div>
 
-    <a class="contact" href="mailto:hello@tether.dog">Follow along → hello@tether.dog</a>
+        <div class="door">
+          <div class="soon">Coming</div>
+          <h3>I found a dog</h3>
+          <p>Step-by-step resources for the first hours: microchip scanning, safe handling, and who in Houston can actually help.</p>
+        </div>
 
-    <p class="footer">Tether · Houston, TX · 2026</p>
+      </div>
+    </div>
+  </div>
 
+  <!-- ===== WHY THIS EXISTS ===== -->
+  <div class="why">
+    <div class="why-inner">
+      <h2>Why this exists</h2>
+      <p>Houston has one of the highest dog euthanasia rates in the United States. Most of those dogs don't die from neglect or because people don't care — <span class="accent">they die from a lack of connection.</span></p>
+      <p>Tether is built to fix that hole in Houston's shelters.</p>
+    </div>
+  </div>
+
+  <!-- ===== CLOSING CTA ===== -->
+  <div class="closing">
+    <h2>Want to be part of it?</h2>
+    <p>Shelters, fosters, and people who just care — we want to hear from you.</p>
+    <a class="contact" href="mailto:hello@tether.dog">hello@tether.dog</a>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="footer">
+    Tether · Houston, TX · 2026
   </div>
 </body>
 </html>

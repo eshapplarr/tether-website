@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===== SETUP ===== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tether — Shelter Dashboard (Demo)</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; }
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+    .topbar { background: #2a2e2a; color: #faf8f2; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .topbar .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 20px; }
+    .demo-tag { background: #c2edca; color: #1f3a25; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .stat { background: #f3efe5; border-radius: 12px; padding: 16px; }
+    .stat .num { font-family: "Fraunces", serif; font-size: 28px; font-weight: 700; }
+    .stat .label { font-size: 12px; color: #6a706a; }
+    .dog-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .dog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .dog-name { font-size: 20px; font-weight: 700; }
+    .dog-meta { font-size: 13px; color: #6a706a; margin-top: 2px; }
+    .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; font-style: italic; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+    .badge.urgent { background: #fde2e2; color: #8a1f1f; }
+    .badge.standard { background: #e8f5ec; color: #1f3a25; }
+    .matches { margin-top: 14px; border-top: 1px solid #f0ecdf; padding-top: 12px; }
+    .matches-label { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f6f3ea; gap: 10px; flex-wrap: wrap; }
+    .match-row:last-child { border-bottom: none; }
+    .match-info .fname { font-size: 14px; font-weight: 600; }
+    .match-info .fdetail { font-size: 12px; color: #6a706a; }
+    .match-right { display: flex; align-items: center; gap: 10px; }
+    .score { font-family: "Fraunces", serif; font-weight: 700; font-size: 16px; }
+    .score.high { color: #1f7a36; }
+    .score.mid { color: #8a6d1f; }
+    .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; }
+    .lc-matched { background: #e8f5ec; color: #1f3a25; }
+    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
+    .lc-placed { background: #ddebfa; color: #1f4d7a; }
+    .lc-finished { background: #2a2e2a; color: #faf8f2; }
+    .no-match { font-size: 13px; color: #8a908a; font-style: italic; }
+    .boost-tag { font-size: 10px; background: #fde9d2; color: #8a521f; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Tether</div>
+    <div class="demo-tag">Demo — sample data, not real dogs</div>
+  </div>
+  <div class="wrap">
+    <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter Dashboard</h1>
+    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Houston Demo Rescue · Matching engine v0.1</p>
+    <div class="stats" id="stats"></div>
+    <div id="dogs"></div>
+    <p class="footer-note">Lifecycle changes reset on refresh — this demo stores nothing. Tether · 2026</p>
+  </div>
+  <script>
+    const dogs = [
+      { name: "Buddy", age: 3, gender: "M", size: "medium", energy: 4,
+        okKids: true, okCats: false, okDogs: true,
+        expNeeded: "some", aloneTolerance: 4, urgency: null,
+        bio: "Leans on your leg while you cook. Pulls a little on leash, working on it." },
+      { name: "Luna", age: 8, gender: "F", size: "small", energy: 1,
+        okKids: true, okCats: true, okDogs: true,
+        expNeeded: "first-time", aloneTolerance: 8, urgency: null,
+        bio: "Senior sweetheart. Wants a lap and a sunbeam, in that order." },
+      { name: "Rex", age: 2, gender: "M", size: "large", energy: 5,
+        okKids: false, okCats: false, okDogs: true,
+        expNeeded: "experienced", aloneTolerance: 2, urgency: "kennel stress",
+        bio: "Found under a car. Brilliant, anxious, needs someone who's done this before." },
+      { name: "Daisy", age: 4, gender: "F", size: "medium", energy: 3,
+        okKids: true, okCats: true, okDogs: false,
+        expNeeded: "some", aloneTolerance: 6, urgency: null,
+        bio: "Selective with other dogs, gold with people. House-trained." },
+      { name: "Tank", age: 6, gender: "M", size: "large", energy: 2,
+        okKids: true, okCats: true, okDogs: true,
+        expNeeded: "first-time", aloneTolerance: 8, urgency: "medical",
+        bio: "Gentle giant recovering from heartworm treatment. Needs a calm place to rest." }
+    ];
+    const fosters = [
+      { name: "Maria C.", housing: "house", yard: true, landlordOk: true,
+        kidsUnder12: false, hasCats: true, hasDogs: false,
+        experience: "some", ownedDogs: true,
+        aloneHours: 4, energyPref: 3, sizePref: "medium", genderPref: "F",
+        agePref: "adult", emergency: false },
+      { name: "James P.", housing: "apartment", yard: false, landlordOk: true,
+        kidsUnder12: false, hasCats: false, hasDogs: false,
+        experience: "first-time", ownedDogs: false,
+        aloneHours: 6, energyPref: 2, sizePref: "small", genderPref: "any",
+        agePref: "senior", emergency: false },
+      { name: "The Rodriguez Family", housing: "house", yard: true, landlordOk: true,
+        kidsUnder12: true, hasCats: false, hasDogs: false,
+        experience: "some", ownedDogs: true,
+        aloneHours: 2, energyPref: 3, sizePref: "any", genderPref: "any",
+        agePref: "any", emergency: false },
+      { name: "Sarah K.", housing: "house", yard: true, landlordOk: true,
+        kidsUnder12: false, hasCats: false, hasDogs: true,
+        experience: "experienced", ownedDogs: true,
+        aloneHours: 2, energyPref: 5, sizePref: "large", genderPref: "any",
+        agePref: "young", emergency: true },
+      { name: "Dev & Anita", housing: "townhouse", yard: false, landlordOk: true,
+        kidsUnder12: false, hasCats: false, hasDogs: false,
+        experience: "some", ownedDogs: true,
+        aloneHours: 8, energyPref: 1, sizePref: "any", genderPref: "any",
+        agePref: "senior", emergency: true }
+    ];
+    function hardFilter(dog, f) {
+      if (!dog.okKids && f.kidsUnder12) return "kids";
+      if (!dog.okCats && f.hasCats) return "cats";
+      if (!dog.okDogs && f.hasDogs) return "dogs";
+      if (dog.expNeeded === "experienced" && f.experience === "first-time" && !f.ownedDogs) return "experience";
+      if (dog.size === "large" && f.housing === "apartment" && !f.yard) return "space";
+      if (!f.landlordOk) return "landlord";
+      return null;
+    }
+    function softScore(dog, f) {
+      let pts = 0;
+      const eDiff = Math.abs(dog.energy - f.energyPref);
+      pts += Math.max(0, 15 - eDiff * 5);
+      pts += (f.aloneHours <= dog.aloneTolerance) ? 10 : Math.max(0, 10 - (f.aloneHours - dog.aloneTolerance) * 5);
+      pts += (!f.kidsUnder12 || dog.okKids) ? 10 : 0;
+      pts += (!f.hasDogs || dog.okDogs) ? 8 : 0;
+      pts += (!f.hasCats || dog.okCats) ? 7 : 0;
+      if (dog.size === "small") pts += 12;
+      else if (dog.size === "medium") pts += (f.housing !== "apartment" || f.yard) ? 12 : 7;
+      else pts += (f.yard ? 12 : 5);
+      pts += (dog.energy >= 4 ? (f.yard ? 8 : 2) : 8);
+      const rank = { "first-time": 1, "some": 2, "experienced": 3 };
+      pts += rank[f.experience] >= rank[dog.expNeeded] ? 15 : 7;
+      pts += (f.sizePref === "any" || f.sizePref === dog.size) ? 5 : 2;
+      pts += (f.genderPref === "any" || f.genderPref === dog.gender) ? 5 : 2;
+      const ageBand = dog.age <= 1 ? "puppy" : dog.age <= 3 ? "young" : dog.age <= 8 ? "adult" : "senior";
+      pts += (f.agePref === "any" || f.agePref === ageBand) ? 5 : 2;
+      return Math.round(pts);
+    }
+    function matchesFor(dog) {
+      const threshold = dog.urgency ? 60 : 75;
+      return fosters
+        .map(f => {
+          if (hardFilter(dog, f)) return null;
+          let score = softScore(dog, f);
+          let boosted = false;
+          if (dog.urgency && f.emergency) { score += 5; boosted = true; }
+          return { foster: f, score: Math.min(score, 100), boosted };
+        })
+        .filter(m => m && m.score >= threshold)
+        .sort((a, b) => b.score - a.score);
+    }
+    const states = ["Matched", "Contacted", "Placed", "Finished"];
+    const stateClass = { Matched: "lc-matched", Contacted: "lc-contacted", Placed: "lc-placed", Finished: "lc-finished" };
+    function advance(btn) {
+      const next = states[(states.indexOf(btn.textContent) + 1) % states.length];
+      btn.textContent = next;
+      btn.className = "lifecycle " + stateClass[next];
+    }
+    const allMatches = dogs.map(d => ({ dog: d, list: matchesFor(d) }));
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><div class="num">${dogs.length}</div><div class="label">Dogs in system</div></div>
+      <div class="stat"><div class="num">${fosters.length}</div><div class="label">Fosters in network</div></div>
+      <div class="stat"><div class="num">${dogs.filter(d => d.urgency).length}</div><div class="label">Urgent dogs</div></div>
+      <div class="stat"><div class="num">${allMatches.reduce((n, m) => n + m.list.length, 0)}</div><div class="label">Matches above threshold</div></div>`;
+    document.getElementById("dogs").innerHTML = allMatches.map(({ dog, list }) => `
+      <div class="dog-card">
+        <div class="dog-head">
+          <div>
+            <div class="dog-name">${dog.name}</div>
+            <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age} · energy ${dog.energy}/5 · ok alone ${dog.aloneTolerance}h · needs ${dog.expNeeded} foster</div>
+            <div class="dog-bio">"${dog.bio}"</div>
+          </div>
+          <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
+        </div>
+        <div class="matches">
+          <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}%</div>
+          ${list.length === 0
+            ? `<div class="no-match">No fosters above threshold yet. Consider a broadcast.</div>`
+            : list.map(m => `
+              <div class="match-row">
+                <div class="match-info">
+                  <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
+                  <div class="fdetail">${m.foster.housing}${m.foster.yard ? " + yard" : ""} · ${m.foster.experience} · away ${m.foster.aloneHours}h/day</div>
+                </div>
+                <div class="match-right">
+                  <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
+                  <button class="lifecycle lc-matched" onclick="advance(this)">Matched</button>
+                </div>
+              </div>`).join("")}
+        </div>
+      </div>`).join("");
+  </script>
+</body>
+</html>

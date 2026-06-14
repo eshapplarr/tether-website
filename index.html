@@ -19,7 +19,24 @@
   <!-- ===== STYLE ZONE ===== -->
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Green "live" badge on active doors */
+.ready {
+  display: inline-block;
+  background: #2a2e2a;
+  color: #c2edca;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
 
+/* Hover effect on clickable doors */
+a.door:hover {
+  background: #edeae0;
+  transform: translateY(-2px);
+  transition: all 0.15s;
+}
     body {
       background: #faf8f2;
       color: #2a2e2a;
@@ -217,17 +234,16 @@
       <p class="doors-sub">Whoever you are in a dog's story, Tether is being built for you.</p>
       <div class="door-grid">
 
-        <div class="door">
-          <div class="soon">Coming</div>
+        <a class="door" href="/dashboard" style="text-decoration: none; color: inherit; display: block;">
+          <div class="ready">Live demo →</div>
           <h3>I'm a shelter</h3>
           <p>One dashboard for your dogs, fosters and potential matches — complete with a broadcast system if a dog needs out fast.</p>
-        </div>
-
-        <div class="door">
-          <div class="soon">Coming</div>
+        </a>
+       <a class="door" href="/foster" style="text-decoration: none; color: inherit; display: block;">
+          <div class="ready">Sign up →</div>
           <h3>I've fostered before</h3>
           <p>Quick signup. Tell us what fits your home, and a shelter reaches out when there's a dog who matches.</p>
-        </div>
+        </a>
 
         <div class="door">
           <div class="soon">Coming</div>

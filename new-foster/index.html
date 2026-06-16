@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===== SETUP ===== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New to Fostering — Tether</title>
+  <meta name="description" content="Honest answers about what fostering a dog actually involves. From people who've done it.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+
+  <!-- ===== STYLES ===== -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #faf8f2;
+      color: #2a2e2a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+
+    /* Top bar */
+    .topbar {
+      background: #2a2e2a;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar .brand {
+      font-family: "Fraunces", serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: #faf8f2;
+      text-decoration: none;
+    }
+    .topbar .back {
+      font-size: 13px;
+      color: #c2edca;
+      text-decoration: none;
+    }
+    .topbar .back:hover { text-decoration: underline; }
+
+    /* Page wrapper */
+    .wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* Page header */
+    .page-header { margin-bottom: 48px; }
+    .page-header .pill {
+      display: inline-block;
+      background: #c2edca;
+      color: #1f3a25;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .page-header h1 {
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .page-header p {
+      font-size: 17px;
+      color: #4a504a;
+      line-height: 1.6;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6a706a;
+      margin: 48px 0 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e8e4d8;
+    }
+
+    /* Wisdom cards — the three big ideas */
+    .wisdom-card {
+      background: #2a2e2a;
+      color: #faf8f2;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .wisdom-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #c2edca;
+      margin-bottom: 10px;
+    }
+    .wisdom-card p {
+      font-size: 15px;
+      color: #d4d8d2;
+      line-height: 1.7;
+    }
+
+    /* Q&A section */
+    .qa { margin-bottom: 32px; }
+    .qa h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .qa p {
+      font-size: 15px;
+      color: #4a504a;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+    .qa p:last-child { margin-bottom: 0; }
+    .qa .note {
+      background: #f3efe5;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #6a706a;
+      margin-top: 10px;
+    }
+
+    /* Divider between Q&As */
+    .qa-divider {
+      border: none;
+      border-top: 1px solid #e8e4d8;
+      margin: 28px 0;
+    }
+
+    /* Closing CTA */
+    .closing-cta {
+      background: #c2edca;
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 48px;
+      text-align: center;
+    }
+    .closing-cta h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1f3a25;
+      margin-bottom: 10px;
+    }
+    .closing-cta p {
+      font-size: 15px;
+      color: #2a2e2a;
+      margin-bottom: 20px;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .closing-cta a {
+      display: inline-block;
+      background: #2a2e2a;
+      color: #faf8f2;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 999px;
+    }
+    .closing-cta a:hover { background: #1a1d1a; }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #8a908a;
+      margin-top: 32px;
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .page-header h1 { font-size: 30px; }
+      .wisdom-card { padding: 22px; }
+      .closing-cta { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a class="brand" href="/">Tether</a>
+    <a class="back" href="/">← Back to home</a>
+  </div>
+
+  <div class="wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="pill">New to fostering</div>
+      <h1>Thinking about fostering a dog?</h1>
+      <p>Here are honest answers to the questions most people have — from people who've actually done it. No pressure. No sales pitch. Just what fostering is really like.</p>
+    </div>
+
+    <!-- THE THREE BIG IDEAS -->
+    <div class="section-label">Three things worth knowing before anything else</div>
+
+    <div class="wisdom-card">
+      <h3>Foster dog and family dog are different things.</h3>
+      <p>That's not a cold distinction — it's a protective one. The foster dog is in your care, and you can love them fully while still holding the clarity that they're not yours permanently. Families who blur that line early are often the ones who struggle most when it's time to let go. Holding the distinction isn't less love. It's the kind of love that actually serves the dog.</p>
+    </div>
+
+    <div class="wisdom-card">
+      <h3>"Foster fail" is a bad name for a good thing.</h3>
+      <p>If you adopt the dog you fostered, that's not a failure — it's a success with a plot twist. And if someone else adopts them, that's also a success. The only real failure is a dog without a home. Every dog that ends up with a good family is a happy dog, regardless of which family it is.</p>
+    </div>
+
+    <div class="wisdom-card">
+      <h3>Don't be desperate to place the dog. Be patient.</h3>
+      <p>You're the dog's advocate at the moment of handoff — possibly their only one. If a potential adopter gives you a bad feeling, that instinct is worth voicing. Take the time to make sure the next home is genuinely right for them. The dog has already been through enough.</p>
+    </div>
+
+    <!-- PRACTICAL Q&A -->
+    <div class="section-label">The practical questions</div>
+
+    <div class="qa">
+      <h3>Who pays for the dog's food and vet care?</h3>
+      <p>This varies by rescue — always ask before you commit. Many rescues cover medical costs entirely, including unexpected vet visits. Food and day-to-day supplies are often the foster's responsibility, but some rescues help with that too. Get it in writing so there are no surprises.</p>
+      <div class="note">When you're matched through Tether, the partner shelter will walk you through exactly what they cover before placement.</div>
+    </div>
+
+    <hr class="qa-divider">
+
+    <div class="qa">
+      <h3>How much time does it actually take?</h3>
+      <p>It depends entirely on the dog. When fostering puppies, expect 20+ hours of active attention — they need feeding, socialization, and someone around almost constantly. An adult dog with a calmer temperament might be completely fine home alone for several hours. The match matters enormously here, which is exactly what Tether is built to get right.</p>
+    </div>
+
+    <hr class="qa-divider">
+
+    <div class="qa">
+      <h3>What if it doesn't work out?</h3>
+      <p>It happens, and it's okay. There's a real community of fosters, rescue coordinators, and volunteers who can step in to support both the dog and your family if a placement isn't working. One dog not being the right fit doesn't close the door on fostering — it just means that particular match wasn't right. The rescue will work with you to find a better situation for everyone.</p>
+    </div>
+
+    <hr class="qa-divider">
+
+    <div class="qa">
+      <h3>What about my other pets?</h3>
+      <p>This depends on the dog too. Calmer dogs tend to integrate more easily with existing pets, and interestingly, your own animals can actually help — they often provide structure and guidance for a foster dog figuring out how a home works. Introductions should be slow and supervised, especially in the first few days. Your existing animals' comfort matters just as much as the foster dog's.</p>
+    </div>
+
+    <hr class="qa-divider">
+
+    <div class="qa">
+      <h3>Is fostering safe with kids?</h3>
+      <p>It can be, with the right preparation. Many of the dogs coming through Houston rescues have histories — abuse, neglect, chaotic home environments. That doesn't make them dangerous, but it does mean they need time and space to decompress. Teach your kids to let the dog come to them, to move calmly, and to understand that the dog's past matters. With the right match and the right family, fostering with kids works well and can be a genuinely meaningful experience for children.</p>
+      <div class="note">Tether's matching engine flags dogs that aren't suitable for homes with young children. You won't be matched with a dog that isn't appropriate for your household.</div>
+    </div>
+
+    <hr class="qa-divider">
+
+    <div class="qa">
+      <h3>How do you handle saying goodbye?</h3>
+      <p>It's hard. There's no way around that. But the dog is going to a family who has chosen them, who will make them a permanent part of their life — and that's what the foster period was working toward all along. Fostering is temporary by design. If you reach the end of a foster period and genuinely can't bear the idea of letting go, that might be the dog telling you something. It might be time to adopt.</p>
+    </div>
+
+    <!-- CLOSING CTA -->
+    <div class="closing-cta">
+      <h2>Ready to take the next step?</h2>
+      <p>Tell us about your home and we'll reach out when there's a dog that fits. No commitment until you say yes to a specific dog.</p>
+      <a href="/foster">Sign up to foster →</a>
+    </div>
+
+    <p class="footer-note">Tether · Houston, TX · 2026</p>
+
+  </div>
+
+</body>
+</html>

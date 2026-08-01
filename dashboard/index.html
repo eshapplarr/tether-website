@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ===== SETUP ===== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tether — Shelter Dashboard (Demo)</title>
@@ -23,13 +22,34 @@
     .stat .num { font-family: "Fraunces", serif; font-size: 28px; font-weight: 700; }
     .stat .label { font-size: 12px; color: #6a706a; }
     .dog-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .dog-layout { display: flex; gap: 18px; }
+    .dog-photo {
+      flex-shrink: 0;
+      width: 110px; height: 110px;
+      background: #f3efe5;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      overflow: hidden;
+    }
+    .dog-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .dog-main { flex: 1; min-width: 0; }
     .dog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
     .dog-name { font-size: 20px; font-weight: 700; }
-    .dog-meta { font-size: 13px; color: #6a706a; margin-top: 2px; }
-    .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; font-style: italic; }
+    .dog-location { font-size: 12px; color: #1f7a36; font-weight: 600; margin-top: 1px; }
+    .dog-meta { font-size: 13px; color: #6a706a; margin-top: 4px; }
+    .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; line-height: 1.6; }
     .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
     .badge.urgent { background: #fde2e2; color: #8a1f1f; }
     .badge.standard { background: #e8f5ec; color: #1f3a25; }
+    .vax { margin-top: 12px; background: #faf8f2; border-radius: 10px; padding: 10px 14px; }
+    .vax-title { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .vax-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+    .vax-name { color: #2a2e2a; font-weight: 600; }
+    .vax-date { color: #6a706a; }
+    .vax-ok { color: #1f7a36; font-weight: 600; }
+    .vax-soon { color: #b07a1f; font-weight: 600; }
+    .vax-expired { color: #b02a2a; font-weight: 700; }
     .matches { margin-top: 14px; border-top: 1px solid #f0ecdf; padding-top: 12px; }
     .matches-label { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
     .match-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f6f3ea; gap: 10px; flex-wrap: wrap; }
@@ -48,6 +68,10 @@
     .no-match { font-size: 13px; color: #8a908a; font-style: italic; }
     .boost-tag { font-size: 10px; background: #fde9d2; color: #8a521f; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
     .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
+    @media (max-width: 600px) {
+      .dog-layout { flex-direction: column; }
+      .dog-photo { width: 100%; height: 160px; }
+    }
   </style>
 </head>
 <body>
@@ -57,61 +81,99 @@
   </div>
   <div class="wrap">
     <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter Dashboard</h1>
-    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Houston Demo Rescue · Matching engine v0.1</p>
+    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Houston Demo Rescue · Matching engine v0.2</p>
     <div class="stats" id="stats"></div>
     <div id="dogs"></div>
     <p class="footer-note">Lifecycle changes reset on refresh — this demo stores nothing. Tether · 2026</p>
   </div>
   <script>
+    // Today's date for vaccination expiry math
+    const TODAY = new Date();
+
     const dogs = [
       { name: "Buddy", age: 3, gender: "M", size: "medium", energy: 4,
+        location: "Houston Demo Rescue · Spring Branch",
         okKids: true, okCats: false, okDogs: true,
         expNeeded: "some", aloneTolerance: 4, urgency: null,
-        bio: "Leans on your leg while you cook. Pulls a little on leash, working on it." },
+        photo: "🐕",
+        vaccinations: [
+          { name: "Rabies", expires: "2027-03-15" },
+          { name: "DHPP", expires: "2026-11-02" },
+          { name: "Bordetella", expires: "2026-07-01" }
+        ],
+        bio: "Buddy came in as an owner surrender when his family moved out of state. He's the kind of dog who leans on your leg while you cook dinner and follows you from room to room — not anxious, just interested. He knows sit and shake, walks well on leash apart from occasional squirrel opinions, and has been solid with every person he's met at the shelter. Working on: not counter-surfing." },
       { name: "Luna", age: 8, gender: "F", size: "small", energy: 1,
+        location: "Houston Demo Rescue · Spring Branch",
         okKids: true, okCats: true, okDogs: true,
         expNeeded: "first-time", aloneTolerance: 8, urgency: null,
-        bio: "Senior sweetheart. Wants a lap and a sunbeam, in that order." },
+        photo: "🐩",
+        vaccinations: [
+          { name: "Rabies", expires: "2028-01-20" },
+          { name: "DHPP", expires: "2027-01-20" }
+        ],
+        bio: "Luna is an eight-year-old sweetheart whose owner passed away. She spent her whole life in a quiet home and it shows — she's completely house-trained, ignores cats, and mostly wants a lap and a sunbeam, in that order. Perfect first foster: low maintenance, deeply grateful, sleeps through the night. Slightly hard of hearing, which mostly means she doesn't notice the doorbell." },
       { name: "Rex", age: 2, gender: "M", size: "large", energy: 5,
+        location: "Houston Demo Rescue · Eastex-Jensen",
         okKids: false, okCats: false, okDogs: true,
         expNeeded: "experienced", aloneTolerance: 2, urgency: "kennel stress",
-        bio: "Found under a car. Brilliant, anxious, needs someone who's done this before." },
+        photo: "🐺",
+        vaccinations: [
+          { name: "Rabies", expires: "2027-05-10" },
+          { name: "DHPP", expires: "2026-06-20" },
+          { name: "Bordetella", expires: "2026-05-30" }
+        ],
+        bio: "Rex was found living under a car in Eastex-Jensen, maybe six months on his own. He's brilliant and it works against him in a kennel — he needs a job, a yard, and a person who's rehabbed a smart, anxious dog before. In calm environments he settles beautifully and is deeply affectionate with people he trusts. The shelter environment is actively hard on him, which is why he's flagged urgent. No kids, no cats, but genuinely good with confident dogs." },
       { name: "Daisy", age: 4, gender: "F", size: "medium", energy: 3,
+        location: "Houston Demo Rescue · Alief",
         okKids: true, okCats: true, okDogs: false,
         expNeeded: "some", aloneTolerance: 6, urgency: null,
-        bio: "Selective with other dogs, gold with people. House-trained." },
+        photo: "🐶",
+        vaccinations: [
+          { name: "Rabies", expires: "2027-09-01" },
+          { name: "DHPP", expires: "2027-02-14" },
+          { name: "Bordetella", expires: "2026-12-05" }
+        ],
+        bio: "Daisy is gold with people — all people, all ages, immediately. Kids can dress her up and she considers it an honor. Her one quirk: she wants to be your only dog. She's selective with other dogs and does best as the star of the show. House-trained, crate-trained, medium energy — a walk and a yard session and she's content." },
       { name: "Tank", age: 6, gender: "M", size: "large", energy: 2,
+        location: "Houston Demo Rescue · Spring Branch",
         okKids: true, okCats: true, okDogs: true,
         expNeeded: "first-time", aloneTolerance: 8, urgency: "medical",
-        bio: "Gentle giant recovering from heartworm treatment. Needs a calm place to rest." }
+        photo: "🐕‍🦺",
+        vaccinations: [
+          { name: "Rabies", expires: "2027-08-22" },
+          { name: "DHPP", expires: "2026-10-30" }
+        ],
+        bio: "Tank is a 90-pound couch potato recovering from heartworm treatment, which means he medically needs what he temperamentally wants anyway: a calm home and a soft place to lie down. Movement restrictions for the next 6-8 weeks — short leash walks only. He's gentle with everything that breathes: kids, cats, other dogs, the mailman. His medical care is fully covered by the rescue; his foster just needs to provide the quiet." }
     ];
+
     const fosters = [
-      { name: "Maria C.", housing: "house", yard: true, landlordOk: true,
+      { name: "Maria C.", city: "Houston", state: "TX", housing: "house", yard: true, landlordOk: true,
         kidsUnder12: false, hasCats: true, hasDogs: false,
         experience: "some", ownedDogs: true,
         aloneHours: 4, energyPref: 3, sizePref: "medium", genderPref: "F",
         agePref: "adult", emergency: false },
-      { name: "James P.", housing: "apartment", yard: false, landlordOk: true,
+      { name: "James P.", city: "Bellaire", state: "TX", housing: "apartment", yard: false, landlordOk: true,
         kidsUnder12: false, hasCats: false, hasDogs: false,
         experience: "first-time", ownedDogs: false,
         aloneHours: 6, energyPref: 2, sizePref: "small", genderPref: "any",
         agePref: "senior", emergency: false },
-      { name: "The Rodriguez Family", housing: "house", yard: true, landlordOk: true,
+      { name: "The Rodriguez Family", city: "Katy", state: "TX", housing: "house", yard: true, landlordOk: true,
         kidsUnder12: true, hasCats: false, hasDogs: false,
         experience: "some", ownedDogs: true,
         aloneHours: 2, energyPref: 3, sizePref: "any", genderPref: "any",
         agePref: "any", emergency: false },
-      { name: "Sarah K.", housing: "house", yard: true, landlordOk: true,
+      { name: "Sarah K.", city: "Cypress", state: "TX", housing: "house", yard: true, landlordOk: true,
         kidsUnder12: false, hasCats: false, hasDogs: true,
         experience: "experienced", ownedDogs: true,
         aloneHours: 2, energyPref: 5, sizePref: "large", genderPref: "any",
         agePref: "young", emergency: true },
-      { name: "Dev & Anita", housing: "townhouse", yard: false, landlordOk: true,
+      { name: "Dev & Anita", city: "Sugar Land", state: "TX", housing: "townhouse", yard: false, landlordOk: true,
         kidsUnder12: false, hasCats: false, hasDogs: false,
         experience: "some", ownedDogs: true,
         aloneHours: 8, energyPref: 1, sizePref: "any", genderPref: "any",
         agePref: "senior", emergency: true }
     ];
+
     function hardFilter(dog, f) {
       if (!dog.okKids && f.kidsUnder12) return "kids";
       if (!dog.okCats && f.hasCats) return "cats";
@@ -121,6 +183,7 @@
       if (!f.landlordOk) return "landlord";
       return null;
     }
+
     function softScore(dog, f) {
       let pts = 0;
       const eDiff = Math.abs(dog.energy - f.energyPref);
@@ -141,6 +204,7 @@
       pts += (f.agePref === "any" || f.agePref === ageBand) ? 5 : 2;
       return Math.round(pts);
     }
+
     function matchesFor(dog) {
       const threshold = dog.urgency ? 60 : 75;
       return fosters
@@ -154,6 +218,16 @@
         .filter(m => m && m.score >= threshold)
         .sort((a, b) => b.score - a.score);
     }
+
+    // Vaccination status: expired / expiring within 30 days / ok
+    function vaxStatus(expires) {
+      const exp = new Date(expires);
+      const daysLeft = Math.floor((exp - TODAY) / (1000 * 60 * 60 * 24));
+      if (daysLeft < 0) return { cls: "vax-expired", label: "EXPIRED " + Math.abs(daysLeft) + "d ago" };
+      if (daysLeft <= 30) return { cls: "vax-soon", label: "expires in " + daysLeft + "d" };
+      return { cls: "vax-ok", label: "current" };
+    }
+
     const states = ["Matched", "Contacted", "Placed", "Finished"];
     const stateClass = { Matched: "lc-matched", Contacted: "lc-contacted", Placed: "lc-placed", Finished: "lc-finished" };
     function advance(btn) {
@@ -161,21 +235,46 @@
       btn.textContent = next;
       btn.className = "lifecycle " + stateClass[next];
     }
+
     const allMatches = dogs.map(d => ({ dog: d, list: matchesFor(d) }));
+
+    // Count vaccination alerts across all dogs
+    const vaxAlerts = dogs.reduce((n, d) => n + d.vaccinations.filter(v => {
+      const days = Math.floor((new Date(v.expires) - TODAY) / (1000*60*60*24));
+      return days <= 30;
+    }).length, 0);
+
     document.getElementById("stats").innerHTML = `
       <div class="stat"><div class="num">${dogs.length}</div><div class="label">Dogs in system</div></div>
       <div class="stat"><div class="num">${fosters.length}</div><div class="label">Fosters in network</div></div>
       <div class="stat"><div class="num">${dogs.filter(d => d.urgency).length}</div><div class="label">Urgent dogs</div></div>
-      <div class="stat"><div class="num">${allMatches.reduce((n, m) => n + m.list.length, 0)}</div><div class="label">Matches above threshold</div></div>`;
+      <div class="stat"><div class="num">${vaxAlerts}</div><div class="label">Vaccination alerts</div></div>`;
+
     document.getElementById("dogs").innerHTML = allMatches.map(({ dog, list }) => `
       <div class="dog-card">
-        <div class="dog-head">
-          <div>
-            <div class="dog-name">${dog.name}</div>
-            <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age} · energy ${dog.energy}/5 · ok alone ${dog.aloneTolerance}h · needs ${dog.expNeeded} foster</div>
-            <div class="dog-bio">"${dog.bio}"</div>
+        <div class="dog-layout">
+          <div class="dog-photo">${dog.photo}</div>
+          <div class="dog-main">
+            <div class="dog-head">
+              <div>
+                <div class="dog-name">${dog.name}</div>
+                <div class="dog-location">📍 ${dog.location}</div>
+                <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age} · energy ${dog.energy}/5 · ok alone ${dog.aloneTolerance}h · needs ${dog.expNeeded} foster</div>
+              </div>
+              <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
+            </div>
+            <div class="dog-bio">${dog.bio}</div>
+            <div class="vax">
+              <div class="vax-title">Vaccinations</div>
+              ${dog.vaccinations.map(v => {
+                const s = vaxStatus(v.expires);
+                return `<div class="vax-row">
+                  <span class="vax-name">${v.name}</span>
+                  <span class="vax-date">${v.expires} · <span class="${s.cls}">${s.label}</span></span>
+                </div>`;
+              }).join("")}
+            </div>
           </div>
-          <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
         </div>
         <div class="matches">
           <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}%</div>
@@ -185,7 +284,7 @@
               <div class="match-row">
                 <div class="match-info">
                   <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
-                  <div class="fdetail">${m.foster.housing}${m.foster.yard ? " + yard" : ""} · ${m.foster.experience} · away ${m.foster.aloneHours}h/day</div>
+                  <div class="fdetail">${m.foster.city}, ${m.foster.state} · ${m.foster.housing}${m.foster.yard ? " + yard" : ""} · ${m.foster.experience} · away ${m.foster.aloneHours}h/day</div>
                 </div>
                 <div class="match-right">
                   <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>

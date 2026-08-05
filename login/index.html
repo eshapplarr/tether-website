@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — Tether</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { max-width: 400px; width: 100%; text-align: center; }
+    h1 { font-family: "Fraunces", serif; font-size: 40px; font-weight: 700; margin-bottom: 8px; }
+    .sub { font-size: 15px; color: #4a504a; margin-bottom: 28px; }
+    .google-btn { display: inline-flex; align-items: center; gap: 10px; background: #2a2e2a; color: #faf8f2;
+      font-size: 15px; font-weight: 600; font-family: inherit; padding: 14px 26px; border: none; border-radius: 999px; cursor: pointer; }
+    .google-btn:hover { background: #1a1d1a; }
+    .signed-in { display: none; }
+    .email-pill { display: inline-block; background: #c2edca; color: #1f3a25; font-size: 14px; font-weight: 600;
+      padding: 8px 18px; border-radius: 999px; margin-bottom: 18px; }
+    .links a { display: inline-block; margin: 6px 8px; font-size: 14px; color: #1f7a36; font-weight: 600; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+    .signout { background: transparent; border: 1px solid #d8d4c8; color: #4a504a; font-size: 13px; font-weight: 600;
+      font-family: inherit; padding: 8px 18px; border-radius: 999px; cursor: pointer; margin-top: 18px; }
+    .note { font-size: 12px; color: #8a908a; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Tether</h1>
+
+    <div id="signed-out">
+      <p class="sub">Sign in to access the shelter dashboard.</p>
+      <button class="google-btn" onclick="signIn()">Sign in with Google →</button>
+      <p class="note">Access is limited to authorized Tether and partner shelter accounts.</p>
+    </div>
+
+    <div class="signed-in" id="signed-in">
+      <div class="email-pill" id="user-email"></div>
+      <p class="sub">You're signed in.</p>
+      <div class="links"><a href="/dashboard">Go to dashboard →</a></div>
+      <button class="signout" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ==== same two values as the foster form ====
+    const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0";
+    // ============================================
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function signIn() {
+      await db.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: 'https://tether-website-8cv.pages.dev/login' }
+      });
+    }
+
+    async function signOut() {
+      await db.auth.signOut();
+      location.reload();
+    }
+
+    // On load: show correct state
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        document.getElementById('signed-out').style.display = 'none';
+        document.getElementById('signed-in').style.display = 'block';
+        document.getElementById('user-email').textContent = session.user.email;
+      }
+    });
+  </script>
+</body>
+</html>

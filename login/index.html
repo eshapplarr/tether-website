@@ -67,14 +67,15 @@
       location.reload();
     }
 
-    // On load: show correct state
-    db.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        document.getElementById('signed-out').style.display = 'none';
-        document.getElementById('signed-in').style.display = 'block';
-        document.getElementById('user-email').textContent = session.user.email;
-      }
-    });
+    // Show signed-in state whenever a session exists (handles redirect timing)
+    function showSession(session) {
+      if (!session) return;
+      document.getElementById('signed-out').style.display = 'none';
+      document.getElementById('signed-in').style.display = 'block';
+      document.getElementById('user-email').textContent = session.user.email;
+    }
+    db.auth.getSession().then(({ data: { session } }) => showSession(session));
+    db.auth.onAuthStateChange((event, session) => showSession(session));
   </script>
 </body>
 </html>

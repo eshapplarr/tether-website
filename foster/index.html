@@ -367,13 +367,28 @@
             <label>Cats?</label>
             <select>
               <option value="">Select one</option>
-              <option>None</option>
-              <option>One or more cats</option>
-            </select>
+              <div class="field">
+          <label>Is anyone in your household allergic to dogs?</label>
+          <div class="pills">
+            <div class="pill-option"><input type="radio" name="allergies" id="al1" value="no"><label for="al1">No</label></div>
+            <div class="pill-option"><input type="radio" name="allergies" id="al2" value="yes"><label for="al2">Yes</label></div>
           </div>
-          <div class="field">
-            <label>Other pets?</label>
-            <input type="text" placeholder="Birds, reptiles, etc. (optional)">
+        </div>
+        <div class="field">
+          <label>Do you have regular visitors the dog would need to get along with?</label>
+          <span class="hint">Think grandkids on weekends, a friend's dog that visits often, a neighbor's cat.</span>
+          <div class="pills">
+            <div class="pill-option"><input type="checkbox" id="vk"><label for="vk">Kids visit regularly</label></div>
+            <div class="pill-option"><input type="checkbox" id="vd"><label for="vd">Dogs visit regularly</label></div>
+            <div class="pill-option"><input type="checkbox" id="vc"><label for="vc">Cats visit regularly</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Does your homeowner's or renter's insurance have breed restrictions?</label>
+          <div class="pills">
+            <div class="pill-option"><input type="radio" name="insurance" id="in1" value="no"><label for="in1">No</label></div>
+            <div class="pill-option"><input type="radio" name="insurance" id="in2" value="yes"><label for="in2">Yes</label></div>
+            <div class="pill-option"><input type="radio" name="insurance" id="in3" value="notsure"><label for="in3">Not sure</label></div>
           </div>
         </div>
         <div class="field" style="margin-top: 4px;">
@@ -382,7 +397,6 @@
             <label for="household-agree">Everyone in my household is on board with fostering.</label>
           </div>
         </div>
-      </div>
 
       <!-- SECTION D: Your Experience -->
       <div class="section">
@@ -469,7 +483,10 @@
           </select>
         </div>
       </div>
-
+<div class="field">
+          <label>Have you ever rehomed a dog before? <span style="font-weight:400; color:#6a706a;">(If yes, briefly tell us why)</span></label>
+          <input type="text" placeholder="No / Yes — briefly why">
+        </div>
       <!-- SECTION F: Your Preferences -->
       <div class="section">
         <div class="section-title">Your preferences <span style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 12px; color: #8a908a;">— these are soft, not dealbreakers</span></div>
@@ -526,9 +543,32 @@
           <label>Anything a shelter should know about your home or situation? <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
           <textarea placeholder="Schedule quirks, deal-breakers, upcoming travel, anything relevant..."></textarea>
         </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Where would the dog stay during the day and at night?</label>
+            <input type="text" placeholder="Free range during day, crate at night...">
+          </div>
+          <div class="field">
+            <label>Who would care for the dog if you travel?</label>
+            <input type="text" placeholder="Family, neighbor, boarding...">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Your current or most recent vet <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
+            <input type="text" placeholder="Clinic name">
+          </div>
+          <div class="field">
+            <label>Willing to provide food at your own cost?</label>
+            <div class="pills">
+              <div class="pill-option"><input type="radio" name="foodcost" id="fc-y" value="yes"><label for="fc-y">Yes</label></div>
+              <div class="pill-option"><input type="radio" name="foodcost" id="fc-n" value="no"><label for="fc-n">Ask the rescue</label></div>
+            </div>
+          </div>
+        </div>
         <div class="field">
           <div class="upload-zone">
-            <p>📷 Photos of your space <span style="color:#8a908a;">(optional)</span></p>
+            <p>📷 <p>📷 Home visit, photos, or videos of your space <span style="color:#8a908a;">(optional)</span></p> <span style="color:#8a908a;">(optional)</span></p>
             <p style="font-size:12px; color:#6a706a;">A few photos help shelters picture where the dog will live — living area, yard, sleeping spot.</p>
             <p class="upload-note">Reviewed by a shelter coordinator, not analyzed by AI.</p>
           </div>

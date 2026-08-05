@@ -1,244 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ===== SETUP ===== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Foster Signup — Tether</title>
-  <meta name="description" content="Sign up to foster a shelter dog in Houston. Tether matches you with the right dog based on your home and lifestyle.">
+  <meta name="description" content="Sign up to foster a shelter dog in Houston.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-
-  <!-- ===== STYLES ===== -->
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #faf8f2;
-      color: #2a2e2a;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6;
-    }
-
-    /* Top navigation bar */
-    .topbar {
-      background: #2a2e2a;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .topbar .brand {
-      font-family: "Fraunces", serif;
-      font-weight: 700;
-      font-size: 20px;
-      color: #faf8f2;
-      text-decoration: none;
-    }
-    .topbar .back {
-      font-size: 13px;
-      color: #c2edca;
-      text-decoration: none;
-    }
+    body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; }
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+    .topbar { background: #2a2e2a; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 20px; color: #faf8f2; text-decoration: none; }
+    .topbar .back { font-size: 13px; color: #c2edca; text-decoration: none; }
     .topbar .back:hover { text-decoration: underline; }
-
-    /* Page wrapper */
-    .wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
-
-    /* Page header */
+    .wrap { max-width: 640px; margin: 0 auto; padding: 48px 24px 80px; }
     .page-header { margin-bottom: 36px; }
-    .page-header h1 {
-      font-family: "Fraunces", serif;
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
+    .page-header h1 { font-size: 36px; font-weight: 700; margin-bottom: 10px; }
     .page-header p { font-size: 16px; color: #4a504a; }
-
-    /* Section cards */
-    .section {
-      background: #fff;
-      border: 1px solid #e8e4d8;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-    .section-title {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #6a706a;
-      margin-bottom: 18px;
-    }
-
-    /* Form rows */
+    .section { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+    .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6a706a; margin-bottom: 18px; }
     .field { margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #2a2e2a;
-      margin-bottom: 6px;
-    }
-    .field .hint {
-      font-size: 12px;
-      color: #6a706a;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    /* Two-column grid for short fields */
+    .field label { display: block; font-size: 13px; font-weight: 600; color: #2a2e2a; margin-bottom: 6px; }
+    .field .hint { font-size: 12px; color: #6a706a; margin-bottom: 6px; display: block; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-    /* Inputs, selects, textareas */
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #d8d4c8;
-      border-radius: 10px;
-      font-size: 14px;
-      font-family: inherit;
-      background: #faf8f2;
-      color: #2a2e2a;
-      appearance: none;
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #d8d4c8; border-radius: 10px;
+      font-size: 14px; font-family: inherit; background: #faf8f2; color: #2a2e2a; appearance: none;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #c2edca;
-      box-shadow: 0 0 0 3px rgba(194,237,202,0.3);
-    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #c2edca; box-shadow: 0 0 0 3px rgba(194,237,202,0.3); }
     textarea { resize: vertical; min-height: 80px; }
-
-    /* Sliders */
     .slider-wrap { margin-top: 4px; }
-    input[type="range"] {
-      width: 100%;
-      accent-color: #1f7a36;
-    }
-    .slider-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: #6a706a;
-      margin-top: 4px;
-    }
-    .slider-val {
-      display: inline-block;
-      background: #c2edca;
-      color: #1f3a25;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 2px 10px;
-      border-radius: 999px;
-      margin-left: 8px;
-    }
-
-    /* Yes/No radio pills */
+    input[type="range"] { width: 100%; accent-color: #1f7a36; }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 11px; color: #6a706a; margin-top: 4px; }
+    .slider-val { display: inline-block; background: #c2edca; color: #1f3a25; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; margin-left: 8px; }
     .pills { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pill-option input[type="radio"] { display: none; }
+    .pill-option input[type="radio"], .pill-option input[type="checkbox"] { display: none; }
     .pill-option label {
-      display: inline-block;
-      padding: 7px 16px;
-      border: 1px solid #d8d4c8;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #4a504a;
-      transition: all 0.15s;
+      display: inline-block; padding: 7px 16px; border: 1px solid #d8d4c8; border-radius: 999px;
+      font-size: 13px; font-weight: 600; cursor: pointer; color: #4a504a; transition: all 0.15s;
     }
-    .pill-option input[type="radio"]:checked + label {
-      background: #c2edca;
-      color: #1f3a25;
-      border-color: #c2edca;
-    }
-
-    /* Checkbox */
-    .check-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 14px;
-    }
-    .check-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      accent-color: #1f7a36;
-      flex-shrink: 0;
-    }
-
-    /* Photo upload zone */
-    .upload-zone {
-      border: 1.5px dashed #c2edca;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      background: #f3faf4;
-    }
+    .pill-option input:checked + label { background: #c2edca; color: #1f3a25; border-color: #c2edca; }
+    .check-row { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; }
+    .check-row input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; accent-color: #1f7a36; flex-shrink: 0; }
+    .upload-zone { border: 1.5px dashed #c2edca; border-radius: 12px; padding: 24px; text-align: center; background: #f3faf4; }
     .upload-zone p { font-size: 13px; color: #4a504a; margin-bottom: 10px; }
     .upload-zone .upload-note { font-size: 11px; color: #6a706a; margin-top: 8px; }
-
-    /* Submit button */
     .submit-btn {
-      width: 100%;
-      background: #2a2e2a;
-      color: #faf8f2;
-      font-size: 16px;
-      font-weight: 600;
-      font-family: inherit;
-      padding: 16px;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      margin-top: 8px;
+      width: 100%; background: #2a2e2a; color: #faf8f2; font-size: 16px; font-weight: 600;
+      font-family: inherit; padding: 16px; border: none; border-radius: 999px; cursor: pointer; margin-top: 8px;
     }
     .submit-btn:hover { background: #1a1d1a; }
-
-    /* Success state (hidden until submit) */
-    .success {
-      display: none;
-      text-align: center;
-      padding: 48px 24px;
-    }
-    .success .check {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    .success h2 {
-      font-family: "Fraunces", serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
+    .submit-btn:disabled { background: #8a908a; cursor: wait; }
+    .error-msg { display: none; background: #fde2e2; color: #8a1f1f; border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-top: 12px; }
+    .success { display: none; text-align: center; padding: 48px 24px; }
+    .success .check { font-size: 48px; margin-bottom: 16px; }
+    .success h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
     .success p { font-size: 16px; color: #4a504a; max-width: 400px; margin: 0 auto 8px; }
-    .success .timeline { font-size: 13px; color: #8a908a; margin-top: 12px; }
-
-    /* Landlord field: only shows when "rent" selected */
+    .privacy-line { font-size: 12px; color: #8a908a; text-align: center; margin-top: 14px; }
+    .privacy-line a { color: #1f7a36; }
     #landlord-field { display: none; }
-
-    /* Mobile */
-    @media (max-width: 480px) {
-      .two-col { grid-template-columns: 1fr; }
-      .page-header h1 { font-size: 28px; }
-    }
+    @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } .page-header h1 { font-size: 28px; } }
   </style>
 </head>
 <body>
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <a class="brand" href="/">Tether</a>
     <a class="back" href="/">← Back to home</a>
@@ -246,235 +76,161 @@
 
   <div class="wrap">
 
-    <!-- PAGE HEADER -->
     <div class="page-header">
       <h1>You've fostered before.</h1>
       <p>Tell us about your home. When there's a dog that fits, a Houston shelter will reach out — no browsing, no pressure.</p>
     </div>
 
-    <!-- THE FORM -->
     <form id="foster-form">
 
-      <!-- SECTION A: About You -->
+      <!-- SECTION A -->
       <div class="section">
         <div class="section-title">About you</div>
         <div class="two-col">
-          <div class="field">
-            <label>Full name *</label>
-            <input type="text" placeholder="Your name" required>
-          </div>
-          <div class="field">
-            <label>Email *</label>
-            <input type="email" placeholder="you@email.com" required>
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input type="tel" placeholder="(713) 000-0000">
-          </div>
-         <div class="field">
-            <label>City *</label>
-            <input type="text" placeholder="Houston" required>
-          </div>
-          <div class="field">
-            <label>State *</label>
-            <input type="text" placeholder="TX" maxlength="2" required>
-          </div>
-          <div class="field">
-            <label>ZIP code *</label>
-            <input type="text" placeholder="77001" maxlength="5" required>
-          </div>
-        </div>
-        <div class="field" style="margin-top: 12px;">
-          <label>How did you hear about Tether?</label>
-          <select>
-            <option value="">Select one</option>
-            <option>Through a rescue or shelter</option>
-            <option>Word of mouth</option>
-            <option>Social media</option>
-            <option>Google search</option>
-            <option>Other</option>
-          </select>
+          <div class="field"><label>Full name *</label><input type="text" id="f-name" required></div>
+          <div class="field"><label>Email *</label><input type="email" id="f-email" required></div>
+          <div class="field"><label>Phone</label><input type="tel" id="f-phone"></div>
+          <div class="field"><label>City *</label><input type="text" id="f-city" placeholder="Houston" required></div>
+          <div class="field"><label>State *</label><input type="text" id="f-state" placeholder="TX" maxlength="2" required></div>
+          <div class="field"><label>ZIP code *</label><input type="text" id="f-zip" placeholder="77001" maxlength="5" required></div>
         </div>
       </div>
 
-      <!-- SECTION B: Your Home -->
+      <!-- SECTION B -->
       <div class="section">
         <div class="section-title">Your home</div>
         <div class="two-col">
-          <div class="field">
-            <label>Type of housing *</label>
-            <select required>
-              <option value="">Select one</option>
-              <option>House</option>
-              <option>Apartment</option>
-              <option>Townhouse</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Yard?</label>
-            <select>
-              <option value="">Select one</option>
-              <option>Fenced yard</option>
-              <option>Unfenced yard</option>
-              <option>No yard</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Do you rent or own?</label>
-            <select id="rent-own" onchange="toggleLandlord(this.value)">
-              <option value="">Select one</option>
-              <option value="own">Own</option>
-              <option value="rent">Rent</option>
-            </select>
-          </div>
-          <div class="field" id="landlord-field">
-            <label>Landlord allows pets?</label>
-            <select>
-              <option value="">Select one</option>
-              <option>Yes</option>
-              <option>No</option>
-              <option>Not sure</option>
-            </select>
-          </div>
+          <div class="field"><label>Type of housing *</label>
+            <select id="f-housing" required>
+              <option value="">Select one</option><option>House</option><option>Apartment</option><option>Townhouse</option><option>Other</option>
+            </select></div>
+          <div class="field"><label>Yard?</label>
+            <select id="f-yard">
+              <option value="">Select one</option><option>Fenced yard</option><option>Unfenced yard</option><option>No yard</option>
+            </select></div>
+          <div class="field"><label>Do you rent or own?</label>
+            <select id="f-rentown" onchange="toggleLandlord(this.value)">
+              <option value="">Select one</option><option value="own">Own</option><option value="rent">Rent</option>
+            </select></div>
+          <div class="field" id="landlord-field"><label>Landlord allows pets?</label>
+            <select id="f-landlord">
+              <option value="">Select one</option><option>Yes</option><option>No</option><option>Not sure</option>
+            </select></div>
         </div>
       </div>
 
-      <!-- SECTION C: Your Household -->
+      <!-- SECTION C -->
       <div class="section">
         <div class="section-title">Your household</div>
         <div class="two-col">
-          <div class="field">
-            <label>Kids at home?</label>
-            <select>
-              <option value="">Select one</option>
-              <option>No kids</option>
-              <option>Kids under 6</option>
-              <option>Kids 6–12</option>
-              <option>Teens only</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Other dogs?</label>
-            <select>
-              <option value="">Select one</option>
-              <option>None</option>
-              <option>One dog</option>
-              <option>Two or more dogs</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Cats?</label>
-            <select>
-              <option value="">Select one</option>
-              <div class="field">
-          <label>Is anyone in your household allergic to dogs?</label>
+          <div class="field"><label>Kids at home?</label>
+            <select id="f-kids">
+              <option value="">Select one</option><option>No kids</option><option>Kids under 6</option><option>Kids 6–12</option><option>Teens only</option>
+            </select></div>
+          <div class="field"><label>Other dogs?</label>
+            <select id="f-hasdogs">
+              <option value="">Select one</option><option>None</option><option>One dog</option><option>Two or more dogs</option>
+            </select></div>
+          <div class="field"><label>Cats?</label>
+            <select id="f-hascats">
+              <option value="">Select one</option><option>None</option><option>One or more cats</option>
+            </select></div>
+          <div class="field"><label>Other pets?</label><input type="text" id="f-otherpets" placeholder="Birds, reptiles, etc. (optional)"></div>
+        </div>
+        <div class="field" style="margin-top:12px;"><label>Is anyone in your household allergic to dogs?</label>
           <div class="pills">
-            <div class="pill-option"><input type="radio" name="allergies" id="al1" value="no"><label for="al1">No</label></div>
+            <div class="pill-option"><input type="radio" name="allergies" id="al1" value="no" checked><label for="al1">No</label></div>
             <div class="pill-option"><input type="radio" name="allergies" id="al2" value="yes"><label for="al2">Yes</label></div>
           </div>
         </div>
-        <div class="field">
-          <label>Do you have regular visitors the dog would need to get along with?</label>
-          <span class="hint">Think grandkids on weekends, a friend's dog that visits often, a neighbor's cat.</span>
+        <div class="field"><label>Do you have regular visitors the dog would need to get along with?</label>
+          <span class="hint">Think grandkids on weekends, a friend's dog that visits often.</span>
           <div class="pills">
-            <div class="pill-option"><input type="checkbox" id="vk"><label for="vk">Kids visit regularly</label></div>
-            <div class="pill-option"><input type="checkbox" id="vd"><label for="vd">Dogs visit regularly</label></div>
-            <div class="pill-option"><input type="checkbox" id="vc"><label for="vc">Cats visit regularly</label></div>
+            <div class="pill-option"><input type="checkbox" id="f-vkids"><label for="f-vkids">Kids visit regularly</label></div>
+            <div class="pill-option"><input type="checkbox" id="f-vdogs"><label for="f-vdogs">Dogs visit regularly</label></div>
+            <div class="pill-option"><input type="checkbox" id="f-vcats"><label for="f-vcats">Cats visit regularly</label></div>
           </div>
         </div>
-        <div class="field">
-          <label>Does your homeowner's or renter's insurance have breed restrictions?</label>
+        <div class="field"><label>Does your homeowner's or renter's insurance have breed restrictions?</label>
           <div class="pills">
-            <div class="pill-option"><input type="radio" name="insurance" id="in1" value="no"><label for="in1">No</label></div>
+            <div class="pill-option"><input type="radio" name="insurance" id="in1" value="no" checked><label for="in1">No</label></div>
             <div class="pill-option"><input type="radio" name="insurance" id="in2" value="yes"><label for="in2">Yes</label></div>
-            <div class="pill-option"><input type="radio" name="insurance" id="in3" value="notsure"><label for="in3">Not sure</label></div>
+            <div class="pill-option"><input type="radio" name="insurance" id="in3" value="not sure"><label for="in3">Not sure</label></div>
           </div>
         </div>
-        <div class="field" style="margin-top: 4px;">
+        <div class="field" style="margin-top:4px;">
           <div class="check-row">
             <input type="checkbox" id="household-agree" required>
             <label for="household-agree">Everyone in my household is on board with fostering.</label>
           </div>
         </div>
+      </div>
 
-      <!-- SECTION D: Your Experience -->
+      <!-- SECTION D -->
       <div class="section">
         <div class="section-title">Your experience</div>
-        <div class="field">
-          <label>How many times have you fostered?</label>
+        <div class="field"><label>How many times have you fostered?</label>
           <div class="pills">
             <div class="pill-option"><input type="radio" name="fosterCount" id="fc1" value="1-2"><label for="fc1">1–2 times</label></div>
             <div class="pill-option"><input type="radio" name="fosterCount" id="fc2" value="3+"><label for="fc2">3 or more times</label></div>
             <div class="pill-option"><input type="radio" name="fosterCount" id="fc3" value="many"><label for="fc3">Lost count</label></div>
           </div>
         </div>
-        <div class="field">
-          <label>Comfort level with training</label>
+        <div class="field"><label>Comfort level with training</label>
           <div class="pills">
             <div class="pill-option"><input type="radio" name="training" id="tr1" value="some"><label for="tr1">Some experience</label></div>
             <div class="pill-option"><input type="radio" name="training" id="tr2" value="experienced"><label for="tr2">Experienced</label></div>
             <div class="pill-option"><input type="radio" name="training" id="tr3" value="professional"><label for="tr3">Professional</label></div>
           </div>
         </div>
-        <div class="two-col" style="margin-top: 4px;">
-          <div class="field">
-            <label>Handled medical needs before?</label>
+        <div class="two-col" style="margin-top:4px;">
+          <div class="field"><label>Handled medical needs before?</label>
             <div class="pills">
               <div class="pill-option"><input type="radio" name="medical" id="med1" value="yes"><label for="med1">Yes</label></div>
-              <div class="pill-option"><input type="radio" name="medical" id="med2" value="no"><label for="med2">No</label></div>
+              <div class="pill-option"><input type="radio" name="medical" id="med2" value="no" checked><label for="med2">No</label></div>
             </div>
           </div>
-          <div class="field">
-            <label>Handled behavioral issues before?</label>
+          <div class="field"><label>Handled behavioral issues before?</label>
             <div class="pills">
               <div class="pill-option"><input type="radio" name="behavioral" id="beh1" value="yes"><label for="beh1">Yes</label></div>
-              <div class="pill-option"><input type="radio" name="behavioral" id="beh2" value="no"><label for="beh2">No</label></div>
+              <div class="pill-option"><input type="radio" name="behavioral" id="beh2" value="no" checked><label for="beh2">No</label></div>
             </div>
           </div>
         </div>
+        <div class="field"><label>Have you ever rehomed a dog before? <span style="font-weight:400; color:#6a706a;">(If yes, briefly tell us why)</span></label>
+          <input type="text" id="f-rehomed" placeholder="No / Yes — briefly why">
+        </div>
       </div>
 
-      <!-- SECTION E: Your Lifestyle -->
+      <!-- SECTION E -->
       <div class="section">
         <div class="section-title">Your lifestyle</div>
-
         <div class="field">
-          <label>Hours the dog would typically be alone:
-            <span class="slider-val" id="alone-val">4 hrs</span>
-          </label>
+          <label>Hours the dog would typically be alone: <span class="slider-val" id="alone-val">4–6 hrs</span></label>
           <div class="slider-wrap">
-            <input type="range" min="0" max="4" step="1" value="2"
+            <input type="range" id="f-alone" min="0" max="4" step="1" value="2"
               oninput="document.getElementById('alone-val').textContent = ['0–2 hrs','2–4 hrs','4–6 hrs','6–8 hrs','8+ hrs'][this.value]">
             <div class="slider-labels"><span>Never alone</span><span>8+ hrs/day</span></div>
           </div>
         </div>
-
         <div class="field">
-          <label>Daily exercise you can give a dog:
-            <span class="slider-val" id="exercise-val">Moderate</span>
-          </label>
+          <label>Daily exercise you can give: <span class="slider-val" id="exercise-val">Light</span></label>
           <div class="slider-wrap">
-            <input type="range" min="0" max="3" step="1" value="1"
-              oninput="document.getElementById('exercise-val').textContent = ['Minimal (short walks)','Light (1 walk/day)','Moderate (2 walks/day)','Very active (runs, hikes)'][this.value]">
+            <input type="range" id="f-exercise" min="0" max="3" step="1" value="1"
+              oninput="document.getElementById('exercise-val').textContent = ['Minimal','Light','Moderate','Very active'][this.value]">
             <div class="slider-labels"><span>Minimal</span><span>Very active</span></div>
           </div>
         </div>
-
         <div class="field">
-          <label>Preferred dog energy level:
-            <span class="slider-val" id="energy-val">3 / 5</span>
-          </label>
+          <label>Preferred dog energy level: <span class="slider-val" id="energy-val">3 / 5</span></label>
           <div class="slider-wrap">
-            <input type="range" min="1" max="5" step="1" value="3"
+            <input type="range" id="f-energy" min="1" max="5" step="1" value="3"
               oninput="document.getElementById('energy-val').textContent = this.value + ' / 5'">
             <div class="slider-labels"><span>Calm couch dog</span><span>High-energy athlete</span></div>
           </div>
         </div>
-
-        <div class="field">
-          <label>Your schedule flexibility</label>
-          <select>
+        <div class="field"><label>Your schedule flexibility</label>
+          <select id="f-schedule">
             <option value="">Select one</option>
             <option>Very flexible (work from home / retired)</option>
             <option>Somewhat flexible</option>
@@ -483,123 +239,154 @@
           </select>
         </div>
       </div>
-<div class="field">
-          <label>Have you ever rehomed a dog before? <span style="font-weight:400; color:#6a706a;">(If yes, briefly tell us why)</span></label>
-          <input type="text" placeholder="No / Yes — briefly why">
-        </div>
-      <!-- SECTION F: Your Preferences -->
+
+      <!-- SECTION F -->
       <div class="section">
-        <div class="section-title">Your preferences <span style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 12px; color: #8a908a;">— these are soft, not dealbreakers</span></div>
+        <div class="section-title">Your preferences <span style="font-weight:400; text-transform:none; letter-spacing:0; font-size:12px; color:#8a908a;">— soft, not dealbreakers</span></div>
         <div class="two-col">
-          <div class="field">
-            <label>Preferred size</label>
-            <select>
-              <option>No preference</option>
-              <option>Small</option>
-              <option>Medium</option>
-              <option>Large</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Preferred gender</label>
-            <select>
-              <option>No preference</option>
-              <option>Female</option>
-              <option>Male</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Preferred age range</label>
-            <select>
-              <option>No preference</option>
-              <option>Puppy (0–1 yr)</option>
-              <option>Young (1–3 yrs)</option>
-              <option>Adult (3–8 yrs)</option>
-              <option>Senior (8+ yrs)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Open to special needs dogs?</label>
-            <select>
-              <option>No preference</option>
-              <option>Yes, open to it</option>
-              <option>Depends on the need</option>
-              <option>Not at this time</option>
-            </select>
-          </div>
+          <div class="field"><label>Preferred size</label>
+            <select id="f-size"><option>No preference</option><option>Small</option><option>Medium</option><option>Large</option></select></div>
+          <div class="field"><label>Preferred gender</label>
+            <select id="f-gender"><option>No preference</option><option>Female</option><option>Male</option></select></div>
+          <div class="field"><label>Preferred age range</label>
+            <select id="f-age"><option>No preference</option><option>Puppy (0–1 yr)</option><option>Young (1–3 yrs)</option><option>Adult (3–8 yrs)</option><option>Senior (8+ yrs)</option></select></div>
+          <div class="field"><label>Open to special needs dogs?</label>
+            <select id="f-special"><option>No preference</option><option>Yes, open to it</option><option>Depends on the need</option><option>Not at this time</option></select></div>
         </div>
-        <div class="field" style="margin-top: 4px;">
+        <div class="field" style="margin-top:4px;">
           <div class="check-row">
-            <input type="checkbox" id="emergency">
-            <label for="emergency">I'm open to emergency placements — short notice, 1–7 days.</label>
+            <input type="checkbox" id="f-emergency">
+            <label for="f-emergency">I'm open to emergency placements — short notice, 1–7 days.</label>
           </div>
         </div>
       </div>
 
-      <!-- SECTION G: Free Text + Photos -->
+      <!-- SECTION G -->
       <div class="section">
         <div class="section-title">Anything else?</div>
-        <div class="field">
-          <label>Anything a shelter should know about your home or situation? <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
-          <textarea placeholder="Schedule quirks, deal-breakers, upcoming travel, anything relevant..."></textarea>
+        <div class="two-col">
+          <div class="field"><label>Where would the dog stay during the day and at night?</label>
+            <input type="text" id="f-daynight" placeholder="Free range during day, crate at night..."></div>
+          <div class="field"><label>Who would care for the dog if you travel?</label>
+            <input type="text" id="f-travel" placeholder="Family, neighbor, boarding..."></div>
         </div>
         <div class="two-col">
-          <div class="field">
-            <label>Where would the dog stay during the day and at night?</label>
-            <input type="text" placeholder="Free range during day, crate at night...">
-          </div>
-          <div class="field">
-            <label>Who would care for the dog if you travel?</label>
-            <input type="text" placeholder="Family, neighbor, boarding...">
-          </div>
-        </div>
-        <div class="two-col">
-          <div class="field">
-            <label>Your current or most recent vet <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
-            <input type="text" placeholder="Clinic name">
-          </div>
-          <div class="field">
-            <label>Willing to provide food at your own cost?</label>
+          <div class="field"><label>Your current or most recent vet <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
+            <input type="text" id="f-vet" placeholder="Clinic name"></div>
+          <div class="field"><label>Willing to provide food at your own cost?</label>
             <div class="pills">
               <div class="pill-option"><input type="radio" name="foodcost" id="fc-y" value="yes"><label for="fc-y">Yes</label></div>
-              <div class="pill-option"><input type="radio" name="foodcost" id="fc-n" value="no"><label for="fc-n">Ask the rescue</label></div>
+              <div class="pill-option"><input type="radio" name="foodcost" id="fc-n" value="no" checked><label for="fc-n">Ask the rescue</label></div>
             </div>
           </div>
         </div>
+        <div class="field"><label>Anything a shelter should know? <span style="font-weight:400; color:#6a706a;">(optional)</span></label>
+          <textarea id="f-notes" placeholder="Schedule quirks, deal-breakers, upcoming travel..."></textarea>
+        </div>
         <div class="field">
           <div class="upload-zone">
-            <p>📷 <p>📷 Home visit, photos, or videos of your space <span style="color:#8a908a;">(optional)</span></p> <span style="color:#8a908a;">(optional)</span></p>
-            <p style="font-size:12px; color:#6a706a;">A few photos help shelters picture where the dog will live — living area, yard, sleeping spot.</p>
-            <p class="upload-note">Reviewed by a shelter coordinator, not analyzed by AI.</p>
+            <p>📷 Home visit, photos, or videos of your space <span style="color:#8a908a;">(optional)</span></p>
+            <p style="font-size:12px; color:#6a706a;">A few photos help shelters picture where the dog will live.</p>
+            <p class="upload-note">Reviewed by a shelter coordinator, not analyzed by AI. Photo upload coming soon — a coordinator may ask directly for now.</p>
           </div>
         </div>
       </div>
 
-      <!-- SUBMIT -->
-      <button type="submit" class="submit-btn">Submit my profile →</button>
+      <button type="submit" class="submit-btn" id="submit-btn">Submit my profile →</button>
+      <div class="error-msg" id="error-msg"></div>
+      <p class="privacy-line">By submitting, you agree to our <a href="/privacy">privacy policy</a>. Your info is only shared with partner shelters to make matches.</p>
 
     </form>
 
-    <!-- SUCCESS STATE (hidden until submit) -->
     <div class="success" id="success-state">
       <div class="check">🐕</div>
       <h2>You're in the network.</h2>
       <p>We've received your profile. Someone from Tether will be in touch at hello.tether.dog@gmail.com to confirm your signup and next steps.</p>
-      <p class="timeline">Most fosters hear within 5–14 days of their first match.</p>
     </div>
 
   </div>
 
-  <!-- ===== JAVASCRIPT ===== -->
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Shows landlord field only if "Rent" is selected
+    // ==== YOUR PROJECT VALUES — replace both ====
+    const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";      // e.g. https://xxxxx.supabase.co
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";    // the long eyJ... anon public key
+    // ============================================
+
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     function toggleLandlord(val) {
       document.getElementById('landlord-field').style.display = val === 'rent' ? 'block' : 'none';
     }
+    function radioVal(name) {
+      const el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : null;
+    }
+    function val(id) { return document.getElementById(id).value || null; }
+    function checked(id) { return document.getElementById(id).checked; }
 
-    // On submit: hide form, show success message
-    document.getElementById('foster-form').addEventListener('submit', function(e) {
+    const aloneLabels = ['0-2','2-4','4-6','6-8','8+'];
+    const exerciseLabels = ['minimal','light','moderate','very active'];
+
+    document.getElementById('foster-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errBox = document.getElementById('error-msg');
+      btn.disabled = true; btn.textContent = "Submitting...";
+      errBox.style.display = 'none';
+
+      const row = {
+        name: val('f-name'),
+        email: val('f-email'),
+        phone: val('f-phone'),
+        city: val('f-city'),
+        state: val('f-state'),
+        zip: val('f-zip'),
+        housing: val('f-housing'),
+        yard: val('f-yard'),
+        rent_own: val('f-rentown'),
+        landlord_ok: val('f-landlord'),
+        kids: val('f-kids'),
+        has_dogs: val('f-hasdogs'),
+        has_cats: val('f-hascats'),
+        other_pets: val('f-otherpets'),
+        household_agree: checked('household-agree'),
+        allergies: radioVal('allergies') === 'yes',
+        visitor_kids: checked('f-vkids'),
+        visitor_dogs: checked('f-vdogs'),
+        visitor_cats: checked('f-vcats'),
+        insurance_restrictions: radioVal('insurance'),
+        foster_count: radioVal('fosterCount'),
+        training: radioVal('training'),
+        medical_exp: radioVal('medical') === 'yes',
+        behavioral_exp: radioVal('behavioral') === 'yes',
+        rehomed_before: val('f-rehomed'),
+        alone_hours: aloneLabels[document.getElementById('f-alone').value],
+        exercise: exerciseLabels[document.getElementById('f-exercise').value],
+        energy_pref: parseInt(document.getElementById('f-energy').value),
+        schedule: val('f-schedule'),
+        size_pref: val('f-size'),
+        gender_pref: val('f-gender'),
+        age_pref: val('f-age'),
+        special_needs: val('f-special'),
+        emergency: checked('f-emergency'),
+        day_night_plan: val('f-daynight'),
+        travel_plan: val('f-travel'),
+        vet_contact: val('f-vet'),
+        food_cost_ok: radioVal('foodcost') === 'yes',
+        notes: val('f-notes')
+      };
+
+      const { error } = await db.from('fosters').insert(row);
+
+      if (error) {
+        errBox.textContent = "Something went wrong: " + error.message + " — please try again, or email hello.tether.dog@gmail.com.";
+        errBox.style.display = 'block';
+        btn.disabled = false; btn.textContent = "Submit my profile →";
+        return;
+      }
+
       document.getElementById('foster-form').style.display = 'none';
       document.getElementById('success-state').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });

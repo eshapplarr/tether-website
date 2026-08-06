@@ -306,7 +306,12 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
                 </div>
               </div>
               <div style="display:flex; gap:8px;">
-                <button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+                .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
+    .lc-matched { background: #e8f5ec; color: #1f3a25; }
+    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
+    .lc-placed { background: #ddebfa; color: #1f4d7a; }
+    .lc-finished { background: #2a2e2a; color: #faf8f2; }
+            button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
                 <button class="decline-btn" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
               </div>
             </div>
@@ -342,8 +347,15 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
                       <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
                       <div class="fdetail">${m.foster.city || '?'}, ${m.foster.state || '?'} · ${m.foster.housing || '?'} · ${m.foster.training || '?'} · away ${m.foster.alone_hours || '?'}h/day</div>
                     </div>
-                    <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
-                  </div>`).join('')}
+<div style="display:flex; align-items:center; gap:10px;">
+                      <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
+                      ${(() => {
+                        const saved = matchesData.find(x => x.dog_id === dog.id && x.foster_id === m.foster.id);
+                        const st = saved ? saved.status : 'matched';
+                        const cls = { matched:'lc-matched', contacted:'lc-contacted', placed:'lc-placed', finished:'lc-finished' }[st];
+                        return `<button class="lifecycle ${cls}" onclick="advanceMatch('${dog.id}','${m.foster.id}','${st}')">${st[0].toUpperCase() + st.slice(1)}</button>`;
+                      })()}
+                    </div>                  </div>`).join('')}
             </div>
           </div>`;
         }).join('');

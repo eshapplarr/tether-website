@@ -183,7 +183,7 @@
 
     // ---------- MATCHING (unchanged spec, vetting enforced) ----------
     function hardFilter(dog, f) {
-      const kidsPresent = (f.kids && f.kids !== 'No kids') || f.visitor_kids;
+const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') || f.visitor_kids;
       const dogsPresent = (f.has_dogs && f.has_dogs !== 'None') || f.visitor_dogs;
       const catsPresent = (f.has_cats && f.has_cats !== 'None') || f.visitor_cats;
       if (!dog.ok_kids && kidsPresent) return "kids";

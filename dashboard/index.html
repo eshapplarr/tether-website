@@ -285,8 +285,16 @@
       loadAll();
     }
 
-    async function setDogStatus(dogId, status, confirmMsg) {
+async function setDogStatus(dogId, status, confirmMsg) {
       if (confirmMsg && !confirm(confirmMsg)) return;
+      await db.from('dogs').update({ status }).eq('id', dogId);
+      if (status === 'adopted' || status === 'available') {
+        // close out any active placement match for this dog
+        await db.from('matches').update({ status: 'finished' })
+          .eq('dog_id', dogId).eq('status', 'placed');
+      }
+      loadAll();
+    }      if (confirmMsg && !confirm(confirmMsg)) return;
       await db.from('dogs').update({ status }).eq('id', dogId);
       loadAll();
     }

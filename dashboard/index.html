@@ -170,14 +170,17 @@
 
     // ---------- LOAD EVERYTHING ----------
     async function loadAll() {
-      const [dogsRes, fostersRes, vaxRes] = await Promise.all([
+      cconst [dogsRes, fostersRes, vaxRes, matchesRes] = await Promise.all([
         db.from('dogs').select('*').eq('status', 'available').order('created_at', { ascending: false }),
         db.from('fosters').select('*'),
-        db.from('vaccinations').select('*')
+       db.from('vaccinations').select('*'),
+        db.from('matches').select('*')
+      ]);
       ]);
       dogsData = dogsRes.data || [];
       fostersData = fostersRes.data || [];
       vaxData = vaxRes.data || [];
+      matchesData = matchesRes.data || [];
       render();
     }
 

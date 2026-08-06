@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tether — Shelter Dashboard (Demo)</title>
+  <title>Tether — Shelter Dashboard</title>
   <meta name="robots" content="noindex">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -12,8 +12,6 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
     // ============================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // THE GATE: no session -> bounce to /login before anything renders
     db.auth.getSession().then(({ data: { session } }) => {
       if (!session) location.replace('/login');
       else document.documentElement.style.visibility = 'visible';
@@ -28,30 +26,23 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; }
     h1, h2, h3 { font-family: "Fraunces", serif; }
-    .topbar { background: #2a2e2a; color: #faf8f2; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .topbar { background: #2a2e2a; color: #faf8f2; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .topbar .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 20px; }
-    .demo-tag { background: #c2edca; color: #1f3a25; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .live-tag { background: #c2edca; color: #1f3a25; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+    .signout-btn { background: transparent; border: 1px solid #4a504a; color: #faf8f2; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
     .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
     .stat { background: #f3efe5; border-radius: 12px; padding: 16px; }
     .stat .num { font-family: "Fraunces", serif; font-size: 28px; font-weight: 700; }
     .stat .label { font-size: 12px; color: #6a706a; }
-    .dog-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .dog-layout { display: flex; gap: 18px; }
-    .dog-photo {
-      flex-shrink: 0;
-      width: 110px; height: 110px;
-      background: #f3efe5;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 40px;
-      overflow: hidden;
-    }
-    .dog-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .dog-main { flex: 1; min-width: 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; margin: 28px 0 14px; }
+    .section-head h2 { font-size: 22px; font-weight: 700; }
+    .add-btn { background: #2a2e2a; color: #faf8f2; font-size: 13px; font-weight: 600; padding: 10px 18px; border: none; border-radius: 999px; cursor: pointer; font-family: inherit; }
+    .add-btn:hover { background: #1a1d1a; }
+    .dog-card, .pending-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
     .dog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
     .dog-name { font-size: 20px; font-weight: 700; }
-    .dog-location { font-size: 12px; color: #1f7a36; font-weight: 600; margin-top: 1px; }
     .dog-meta { font-size: 13px; color: #6a706a; margin-top: 4px; }
     .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; line-height: 1.6; }
     .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
@@ -60,8 +51,6 @@
     .vax { margin-top: 12px; background: #faf8f2; border-radius: 10px; padding: 10px 14px; }
     .vax-title { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .vax-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
-    .vax-name { color: #2a2e2a; font-weight: 600; }
-    .vax-date { color: #6a706a; }
     .vax-ok { color: #1f7a36; font-weight: 600; }
     .vax-soon { color: #b07a1f; font-weight: 600; }
     .vax-expired { color: #b02a2a; font-weight: 700; }
@@ -71,247 +60,322 @@
     .match-row:last-child { border-bottom: none; }
     .match-info .fname { font-size: 14px; font-weight: 600; }
     .match-info .fdetail { font-size: 12px; color: #6a706a; }
-    .match-right { display: flex; align-items: center; gap: 10px; }
     .score { font-family: "Fraunces", serif; font-weight: 700; font-size: 16px; }
     .score.high { color: #1f7a36; }
     .score.mid { color: #8a6d1f; }
-    .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; }
-    .lc-matched { background: #e8f5ec; color: #1f3a25; }
-    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
-    .lc-placed { background: #ddebfa; color: #1f4d7a; }
-    .lc-finished { background: #2a2e2a; color: #faf8f2; }
-    .no-match { font-size: 13px; color: #8a908a; font-style: italic; }
+    .no-match, .empty-state { font-size: 13px; color: #8a908a; font-style: italic; }
+    .empty-state { background: #fff; border: 1px dashed #d8d4c8; border-radius: 16px; padding: 28px; text-align: center; }
     .boost-tag { font-size: 10px; background: #fde9d2; color: #8a521f; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
-    .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
-    @media (max-width: 600px) {
-      .dog-layout { flex-direction: column; }
-      .dog-photo { width: 100%; height: 160px; }
+    .approve-btn, .decline-btn { font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
+    .approve-btn { background: #c2edca; color: #1f3a25; }
+    .decline-btn { background: #fde2e2; color: #8a1f1f; }
+    .pending-info { font-size: 13px; color: #4a504a; margin-top: 6px; line-height: 1.6; }
+    /* modal */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(42,46,42,0.5); z-index: 50; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 16px; }
+    .modal { background: #faf8f2; border-radius: 18px; max-width: 560px; width: 100%; padding: 28px; }
+    .modal h2 { font-size: 22px; margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    .field input[type="text"], .field input[type="number"], .field input[type="date"], .field select, .field textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid #d8d4c8; border-radius: 10px; font-size: 14px; font-family: inherit; background: #fff;
     }
+    .field textarea { min-height: 70px; resize: vertical; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .check-line { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+    .check-line label { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+    .vax-add-row { display: grid; grid-template-columns: 2fr 1.5fr 1.5fr auto; gap: 8px; margin-bottom: 8px; align-items: end; }
+    .small-x { background: transparent; border: 1px solid #d8d4c8; border-radius: 8px; cursor: pointer; padding: 8px 10px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .cancel-btn { background: transparent; border: 1px solid #d8d4c8; color: #4a504a; font-size: 14px; font-weight: 600; padding: 12px 20px; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 1; }
+    .save-btn { background: #2a2e2a; color: #faf8f2; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 2; }
+    .save-btn:disabled { background: #8a908a; }
+    .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
+    @media (max-width: 600px) { .three-col, .two-col, .vax-add-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+
   <div class="topbar">
     <div class="brand">Tether</div>
-    <div class="demo-tag">Demo — sample data, not real dogs</div>
-    <button onclick="db.auth.signOut().then(() => location.replace('/login'))"
-      style="background: transparent; border: 1px solid #4a504a; color: #faf8f2; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit;">
-      Sign out
-    </button>
+    <div class="topbar-right">
+      <div class="live-tag">Live data</div>
+      <button class="signout-btn" onclick="db.auth.signOut().then(() => location.replace('/login'))">Sign out</button>
+    </div>
   </div>
+
   <div class="wrap">
     <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter Dashboard</h1>
-    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Houston Demo Rescue · Matching engine v0.2</p>
+    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Matching engine v0.2 · vetted fosters only</p>
+
     <div class="stats" id="stats"></div>
+
+    <div class="section-head">
+      <h2>Pending foster reviews</h2>
+    </div>
+    <div id="pending"></div>
+
+    <div class="section-head">
+      <h2>Dogs &amp; matches</h2>
+      <button class="add-btn" onclick="openModal()">+ Add a dog</button>
+    </div>
     <div id="dogs"></div>
-    <p class="footer-note">Lifecycle changes reset on refresh — this demo stores nothing. Tether · 2026</p>
+
+    <p class="footer-note">Tether · live database · 2026</p>
   </div>
+
+  <!-- ADD A DOG MODAL -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal">
+      <h2>Add a dog</h2>
+      <div class="two-col">
+        <div class="field"><label>Name *</label><input type="text" id="d-name"></div>
+        <div class="field"><label>Age (years)</label><input type="number" id="d-age" min="0" max="25"></div>
+        <div class="field"><label>Gender</label>
+          <select id="d-gender"><option value="M">Male</option><option value="F">Female</option></select></div>
+        <div class="field"><label>Size</label>
+          <select id="d-size"><option>small</option><option selected>medium</option><option>large</option></select></div>
+        <div class="field"><label>Energy (1–5)</label><input type="number" id="d-energy" min="1" max="5" value="3"></div>
+        <div class="field"><label>Ok alone (hours)</label><input type="number" id="d-alone" min="0" max="12" value="4"></div>
+      </div>
+      <div class="field"><label>Good with</label>
+        <div class="check-line">
+          <label><input type="checkbox" id="d-kids"> Kids</label>
+          <label><input type="checkbox" id="d-cats"> Cats</label>
+          <label><input type="checkbox" id="d-dogs"> Dogs</label>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Experience needed</label>
+          <select id="d-exp"><option>first-time</option><option selected>some</option><option>experienced</option></select></div>
+        <div class="field"><label>Urgency</label>
+          <select id="d-urgency"><option value="">None</option><option value="medical">Medical</option><option value="kennel stress">Kennel stress</option><option value="capacity">Capacity emergency</option></select></div>
+      </div>
+      <div class="field"><label>Bio</label><textarea id="d-bio" placeholder="Who is this dog? Their story, their quirks, what home fits them..."></textarea></div>
+      <div class="field">
+        <label>Vaccinations</label>
+        <div id="vax-rows"></div>
+        <button class="small-x" style="border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600;" onclick="addVaxRow()">+ Add vaccination</button>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="save-btn" id="save-dog" onclick="saveDog()">Save dog</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Today's date for vaccination expiry math
     const TODAY = new Date();
+    let dogsData = [], fostersData = [], vaxData = [];
 
-    const dogs = [
-      { name: "Buddy", age: 3, gender: "M", size: "medium", energy: 4,
-        location: "Houston Demo Rescue · Spring Branch",
-        okKids: true, okCats: false, okDogs: true,
-        expNeeded: "some", aloneTolerance: 4, urgency: null,
-        photo: "🐕",
-        vaccinations: [
-          { name: "Rabies", expires: "2027-03-15" },
-          { name: "DHPP", expires: "2026-11-02" },
-          { name: "Bordetella", expires: "2026-07-01" }
-        ],
-        bio: "Buddy came in as an owner surrender when his family moved out of state. He's the kind of dog who leans on your leg while you cook dinner and follows you from room to room — not anxious, just interested. He knows sit and shake, walks well on leash apart from occasional squirrel opinions, and has been solid with every person he's met at the shelter. Working on: not counter-surfing." },
-      { name: "Luna", age: 8, gender: "F", size: "small", energy: 1,
-        location: "Houston Demo Rescue · Spring Branch",
-        okKids: true, okCats: true, okDogs: true,
-        expNeeded: "first-time", aloneTolerance: 8, urgency: null,
-        photo: "🐩",
-        vaccinations: [
-          { name: "Rabies", expires: "2028-01-20" },
-          { name: "DHPP", expires: "2027-01-20" }
-        ],
-        bio: "Luna is an eight-year-old sweetheart whose owner passed away. She spent her whole life in a quiet home and it shows — she's completely house-trained, ignores cats, and mostly wants a lap and a sunbeam, in that order. Perfect first foster: low maintenance, deeply grateful, sleeps through the night. Slightly hard of hearing, which mostly means she doesn't notice the doorbell." },
-      { name: "Rex", age: 2, gender: "M", size: "large", energy: 5,
-        location: "Houston Demo Rescue · Eastex-Jensen",
-        okKids: false, okCats: false, okDogs: true,
-        expNeeded: "experienced", aloneTolerance: 2, urgency: "kennel stress",
-        photo: "🐺",
-        vaccinations: [
-          { name: "Rabies", expires: "2027-05-10" },
-          { name: "DHPP", expires: "2026-06-20" },
-          { name: "Bordetella", expires: "2026-05-30" }
-        ],
-        bio: "Rex was found living under a car in Eastex-Jensen, maybe six months on his own. He's brilliant and it works against him in a kennel — he needs a job, a yard, and a person who's rehabbed a smart, anxious dog before. In calm environments he settles beautifully and is deeply affectionate with people he trusts. The shelter environment is actively hard on him, which is why he's flagged urgent. No kids, no cats, but genuinely good with confident dogs." },
-      { name: "Daisy", age: 4, gender: "F", size: "medium", energy: 3,
-        location: "Houston Demo Rescue · Alief",
-        okKids: true, okCats: true, okDogs: false,
-        expNeeded: "some", aloneTolerance: 6, urgency: null,
-        photo: "🐶",
-        vaccinations: [
-          { name: "Rabies", expires: "2027-09-01" },
-          { name: "DHPP", expires: "2027-02-14" },
-          { name: "Bordetella", expires: "2026-12-05" }
-        ],
-        bio: "Daisy is gold with people — all people, all ages, immediately. Kids can dress her up and she considers it an honor. Her one quirk: she wants to be your only dog. She's selective with other dogs and does best as the star of the show. House-trained, crate-trained, medium energy — a walk and a yard session and she's content." },
-      { name: "Tank", age: 6, gender: "M", size: "large", energy: 2,
-        location: "Houston Demo Rescue · Spring Branch",
-        okKids: true, okCats: true, okDogs: true,
-        expNeeded: "first-time", aloneTolerance: 8, urgency: "medical",
-        photo: "🐕‍🦺",
-        vaccinations: [
-          { name: "Rabies", expires: "2027-08-22" },
-          { name: "DHPP", expires: "2026-10-30" }
-        ],
-        bio: "Tank is a 90-pound couch potato recovering from heartworm treatment, which means he medically needs what he temperamentally wants anyway: a calm home and a soft place to lie down. Movement restrictions for the next 6-8 weeks — short leash walks only. He's gentle with everything that breathes: kids, cats, other dogs, the mailman. His medical care is fully covered by the rescue; his foster just needs to provide the quiet." }
-    ];
+    // ---------- LOAD EVERYTHING ----------
+    async function loadAll() {
+      const [dogsRes, fostersRes, vaxRes] = await Promise.all([
+        db.from('dogs').select('*').eq('status', 'available').order('created_at', { ascending: false }),
+        db.from('fosters').select('*'),
+        db.from('vaccinations').select('*')
+      ]);
+      dogsData = dogsRes.data || [];
+      fostersData = fostersRes.data || [];
+      vaxData = vaxRes.data || [];
+      render();
+    }
 
-    const fosters = [
-      { name: "Maria C.", city: "Houston", state: "TX", housing: "house", yard: true, landlordOk: true,
-        kidsUnder12: false, hasCats: true, hasDogs: false,
-        experience: "some", ownedDogs: true,
-        aloneHours: 4, energyPref: 3, sizePref: "medium", genderPref: "F",
-        agePref: "adult", emergency: false },
-      { name: "James P.", city: "Bellaire", state: "TX", housing: "apartment", yard: false, landlordOk: true,
-        kidsUnder12: false, hasCats: false, hasDogs: false,
-        experience: "first-time", ownedDogs: false,
-        aloneHours: 6, energyPref: 2, sizePref: "small", genderPref: "any",
-        agePref: "senior", emergency: false },
-      { name: "The Rodriguez Family", city: "Katy", state: "TX", housing: "house", yard: true, landlordOk: true,
-        kidsUnder12: true, hasCats: false, hasDogs: false,
-        experience: "some", ownedDogs: true,
-        aloneHours: 2, energyPref: 3, sizePref: "any", genderPref: "any",
-        agePref: "any", emergency: false },
-      { name: "Sarah K.", city: "Cypress", state: "TX", housing: "house", yard: true, landlordOk: true,
-        kidsUnder12: false, hasCats: false, hasDogs: true,
-        experience: "experienced", ownedDogs: true,
-        aloneHours: 2, energyPref: 5, sizePref: "large", genderPref: "any",
-        agePref: "young", emergency: true },
-      { name: "Dev & Anita", city: "Sugar Land", state: "TX", housing: "townhouse", yard: false, landlordOk: true,
-        kidsUnder12: false, hasCats: false, hasDogs: false,
-        experience: "some", ownedDogs: true,
-        aloneHours: 8, energyPref: 1, sizePref: "any", genderPref: "any",
-        agePref: "senior", emergency: true }
-    ];
-
+    // ---------- MATCHING (unchanged spec, vetting enforced) ----------
     function hardFilter(dog, f) {
-      if (!dog.okKids && f.kidsUnder12) return "kids";
-      if (!dog.okCats && f.hasCats) return "cats";
-      if (!dog.okDogs && f.hasDogs) return "dogs";
-      if (dog.expNeeded === "experienced" && f.experience === "first-time" && !f.ownedDogs) return "experience";
-      if (dog.size === "large" && f.housing === "apartment" && !f.yard) return "space";
-      if (!f.landlordOk) return "landlord";
+      const kidsPresent = (f.kids && f.kids !== 'No kids') || f.visitor_kids;
+      const dogsPresent = (f.has_dogs && f.has_dogs !== 'None') || f.visitor_dogs;
+      const catsPresent = (f.has_cats && f.has_cats !== 'None') || f.visitor_cats;
+      if (!dog.ok_kids && kidsPresent) return "kids";
+      if (!dog.ok_cats && catsPresent) return "cats";
+      if (!dog.ok_dogs && dogsPresent) return "dogs";
+      if (f.allergies) return "allergies";
+      if (dog.exp_needed === "experienced" && f.foster_count === null && f.training === null) return "experience";
+      if (f.landlord_ok === 'No') return "landlord";
       return null;
     }
-
     function softScore(dog, f) {
       let pts = 0;
-      const eDiff = Math.abs(dog.energy - f.energyPref);
+      const energyPref = f.energy_pref || 3;
+      const eDiff = Math.abs((dog.energy || 3) - energyPref);
       pts += Math.max(0, 15 - eDiff * 5);
-      pts += (f.aloneHours <= dog.aloneTolerance) ? 10 : Math.max(0, 10 - (f.aloneHours - dog.aloneTolerance) * 5);
-      pts += (!f.kidsUnder12 || dog.okKids) ? 10 : 0;
-      pts += (!f.hasDogs || dog.okDogs) ? 8 : 0;
-      pts += (!f.hasCats || dog.okCats) ? 7 : 0;
-      if (dog.size === "small") pts += 12;
-      else if (dog.size === "medium") pts += (f.housing !== "apartment" || f.yard) ? 12 : 7;
-      else pts += (f.yard ? 12 : 5);
-      pts += (dog.energy >= 4 ? (f.yard ? 8 : 2) : 8);
-      const rank = { "first-time": 1, "some": 2, "experienced": 3 };
-      pts += rank[f.experience] >= rank[dog.expNeeded] ? 15 : 7;
-      pts += (f.sizePref === "any" || f.sizePref === dog.size) ? 5 : 2;
-      pts += (f.genderPref === "any" || f.genderPref === dog.gender) ? 5 : 2;
-      const ageBand = dog.age <= 1 ? "puppy" : dog.age <= 3 ? "young" : dog.age <= 8 ? "adult" : "senior";
-      pts += (f.agePref === "any" || f.agePref === ageBand) ? 5 : 2;
-      return Math.round(pts);
+      const aloneMap = { '0-2': 1, '2-4': 3, '4-6': 5, '6-8': 7, '8+': 9 };
+      const fAlone = aloneMap[f.alone_hours] || 5;
+      pts += (fAlone <= (dog.alone_tolerance || 4)) ? 10 : Math.max(0, 10 - (fAlone - dog.alone_tolerance) * 3);
+      pts += 25; // household compat survived hard filters
+      const sizeOk = !f.size_pref || f.size_pref === 'No preference' || f.size_pref.toLowerCase() === dog.size;
+      pts += sizeOk ? 12 : 6;
+      pts += 8;
+      const rank = { "first-time": 1, "some": 2, "experienced": 3, "professional": 3 };
+      pts += (rank[f.training] || 1) >= (rank[dog.exp_needed] || 1) ? 15 : 7;
+      const gOk = !f.gender_pref || f.gender_pref === 'No preference' || f.gender_pref[0] === dog.gender;
+      pts += gOk ? 5 : 2;
+      const ageBand = dog.age <= 1 ? "Puppy" : dog.age <= 3 ? "Young" : dog.age <= 8 ? "Adult" : "Senior";
+      const aOk = !f.age_pref || f.age_pref === 'No preference' || f.age_pref.startsWith(ageBand);
+      pts += aOk ? 5 : 2;
+      return Math.min(100, Math.round(pts));
     }
-
     function matchesFor(dog) {
       const threshold = dog.urgency ? 60 : 75;
-      return fosters
+      return fostersData
+        .filter(f => f.vet_status === 'vetted')
         .map(f => {
           if (hardFilter(dog, f)) return null;
           let score = softScore(dog, f);
           let boosted = false;
-          if (dog.urgency && f.emergency) { score += 5; boosted = true; }
-          return { foster: f, score: Math.min(score, 100), boosted };
+          if (dog.urgency && f.emergency) { score = Math.min(100, score + 5); boosted = true; }
+          return { foster: f, score, boosted };
         })
         .filter(m => m && m.score >= threshold)
         .sort((a, b) => b.score - a.score);
     }
 
-    // Vaccination status: expired / expiring within 30 days / ok
+    // ---------- VETTING ACTIONS ----------
+    async function setVetStatus(fosterId, status) {
+      const { data: { session } } = await db.auth.getSession();
+      await db.from('fosters').update({
+        vet_status: status,
+        vetted_by: session?.user?.email || 'unknown',
+        vetted_at: new Date().toISOString()
+      }).eq('id', fosterId);
+      loadAll();
+    }
+
+    // ---------- VAX STATUS ----------
     function vaxStatus(expires) {
-      const exp = new Date(expires);
-      const daysLeft = Math.floor((exp - TODAY) / (1000 * 60 * 60 * 24));
-      if (daysLeft < 0) return { cls: "vax-expired", label: "EXPIRED " + Math.abs(daysLeft) + "d ago" };
-      if (daysLeft <= 30) return { cls: "vax-soon", label: "expires in " + daysLeft + "d" };
+      if (!expires) return { cls: "vax-ok", label: "no expiry set" };
+      const days = Math.floor((new Date(expires) - TODAY) / 86400000);
+      if (days < 0) return { cls: "vax-expired", label: "EXPIRED " + Math.abs(days) + "d ago" };
+      if (days <= 30) return { cls: "vax-soon", label: "expires in " + days + "d" };
       return { cls: "vax-ok", label: "current" };
     }
 
-    const states = ["Matched", "Contacted", "Placed", "Finished"];
-    const stateClass = { Matched: "lc-matched", Contacted: "lc-contacted", Placed: "lc-placed", Finished: "lc-finished" };
-    function advance(btn) {
-      const next = states[(states.indexOf(btn.textContent) + 1) % states.length];
-      btn.textContent = next;
-      btn.className = "lifecycle " + stateClass[next];
-    }
+    // ---------- RENDER ----------
+    function render() {
+      const pending = fostersData.filter(f => f.vet_status === 'pending');
+      const vetted = fostersData.filter(f => f.vet_status === 'vetted');
+      const vaxAlerts = vaxData.filter(v => {
+        if (!v.expires) return false;
+        return Math.floor((new Date(v.expires) - TODAY) / 86400000) <= 30;
+      }).length;
 
-    const allMatches = dogs.map(d => ({ dog: d, list: matchesFor(d) }));
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="num">${dogsData.length}</div><div class="label">Dogs available</div></div>
+        <div class="stat"><div class="num">${vetted.length}</div><div class="label">Vetted fosters</div></div>
+        <div class="stat"><div class="num">${pending.length}</div><div class="label">Pending review</div></div>
+        <div class="stat"><div class="num">${vaxAlerts}</div><div class="label">Vaccination alerts</div></div>`;
 
-    // Count vaccination alerts across all dogs
-    const vaxAlerts = dogs.reduce((n, d) => n + d.vaccinations.filter(v => {
-      const days = Math.floor((new Date(v.expires) - TODAY) / (1000*60*60*24));
-      return days <= 30;
-    }).length, 0);
+      document.getElementById("pending").innerHTML = pending.length === 0
+        ? `<div class="empty-state">No pending foster signups. New signups from the website appear here for review.</div>`
+        : pending.map(f => `
+          <div class="pending-card">
+            <div class="dog-head">
+              <div>
+                <div class="dog-name" style="font-size:16px;">${f.name || 'Unnamed'}</div>
+                <div class="pending-info">
+                  ${f.city || '?'}, ${f.state || '?'} · ${f.housing || '?'} · ${f.yard || 'yard unknown'} · ${f.rent_own === 'rent' ? 'Rents (landlord: ' + (f.landlord_ok || '?') + ')' : 'Owns'}<br>
+                  Kids: ${f.kids || '?'} · Dogs: ${f.has_dogs || '?'} · Cats: ${f.has_cats || '?'} · Allergies: ${f.allergies ? 'YES' : 'no'}<br>
+                  Fostered: ${f.foster_count || '?'} · Training: ${f.training || '?'} · Rehomed before: ${f.rehomed_before || 'not answered'}<br>
+                  Vet: ${f.vet_contact || 'not provided'} · Day/night: ${f.day_night_plan || '—'} · Travel: ${f.travel_plan || '—'}
+                  ${f.notes ? '<br>Notes: ' + f.notes : ''}
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+                <button class="decline-btn" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
+              </div>
+            </div>
+          </div>`).join('');
 
-    document.getElementById("stats").innerHTML = `
-      <div class="stat"><div class="num">${dogs.length}</div><div class="label">Dogs in system</div></div>
-      <div class="stat"><div class="num">${fosters.length}</div><div class="label">Fosters in network</div></div>
-      <div class="stat"><div class="num">${dogs.filter(d => d.urgency).length}</div><div class="label">Urgent dogs</div></div>
-      <div class="stat"><div class="num">${vaxAlerts}</div><div class="label">Vaccination alerts</div></div>`;
-
-    document.getElementById("dogs").innerHTML = allMatches.map(({ dog, list }) => `
-      <div class="dog-card">
-        <div class="dog-layout">
-          <div class="dog-photo">${dog.photo}</div>
-          <div class="dog-main">
+      document.getElementById("dogs").innerHTML = dogsData.length === 0
+        ? `<div class="empty-state">No dogs yet. Click "+ Add a dog" to add your first — matches compute instantly.</div>`
+        : dogsData.map(dog => {
+          const list = matchesFor(dog);
+          const dogVax = vaxData.filter(v => v.dog_id === dog.id);
+          return `
+          <div class="dog-card">
             <div class="dog-head">
               <div>
                 <div class="dog-name">${dog.name}</div>
-                <div class="dog-location">📍 ${dog.location}</div>
-                <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age} · energy ${dog.energy}/5 · ok alone ${dog.aloneTolerance}h · needs ${dog.expNeeded} foster</div>
+                <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'} · energy ${dog.energy ?? '?'}/5 · ok alone ${dog.alone_tolerance ?? '?'}h · needs ${dog.exp_needed || '?'} foster</div>
+                ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
               </div>
               <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
             </div>
-            <div class="dog-bio">${dog.bio}</div>
-            <div class="vax">
-              <div class="vax-title">Vaccinations</div>
-              ${dog.vaccinations.map(v => {
-                const s = vaxStatus(v.expires);
-                return `<div class="vax-row">
-                  <span class="vax-name">${v.name}</span>
-                  <span class="vax-date">${v.expires} · <span class="${s.cls}">${s.label}</span></span>
-                </div>`;
-              }).join("")}
+            ${dogVax.length ? `<div class="vax"><div class="vax-title">Vaccinations</div>
+              ${dogVax.map(v => { const s = vaxStatus(v.expires); return `<div class="vax-row"><span style="font-weight:600;">${v.name}</span><span style="color:#6a706a;">${v.expires || '—'} · <span class="${s.cls}">${s.label}</span></span></div>`; }).join('')}
+            </div>` : ''}
+            <div class="matches">
+              <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}% (vetted fosters only)</div>
+              ${list.length === 0
+                ? `<div class="no-match">No vetted fosters above threshold yet.</div>`
+                : list.map(m => `
+                  <div class="match-row">
+                    <div class="match-info">
+                      <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
+                      <div class="fdetail">${m.foster.city || '?'}, ${m.foster.state || '?'} · ${m.foster.housing || '?'} · ${m.foster.training || '?'} · away ${m.foster.alone_hours || '?'}h/day</div>
+                    </div>
+                    <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
+                  </div>`).join('')}
             </div>
-          </div>
-        </div>
-        <div class="matches">
-          <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}%</div>
-          ${list.length === 0
-            ? `<div class="no-match">No fosters above threshold yet. Consider a broadcast.</div>`
-            : list.map(m => `
-              <div class="match-row">
-                <div class="match-info">
-                  <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
-                  <div class="fdetail">${m.foster.city}, ${m.foster.state} · ${m.foster.housing}${m.foster.yard ? " + yard" : ""} · ${m.foster.experience} · away ${m.foster.aloneHours}h/day</div>
-                </div>
-                <div class="match-right">
-                  <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
-                  <button class="lifecycle lc-matched" onclick="advance(this)">Matched</button>
-                </div>
-              </div>`).join("")}
-        </div>
-      </div>`).join("");
+          </div>`;
+        }).join('');
+    }
+
+    // ---------- ADD A DOG ----------
+    function openModal() { document.getElementById('modal-bg').style.display = 'flex'; if (!document.querySelector('.vax-add-row')) addVaxRow(); }
+    function closeModal() { document.getElementById('modal-bg').style.display = 'none'; }
+    function addVaxRow() {
+      const row = document.createElement('div');
+      row.className = 'vax-add-row';
+      row.innerHTML = `
+        <div class="field" style="margin:0;"><label>Vaccine</label><input type="text" class="vx-name" placeholder="Rabies"></div>
+        <div class="field" style="margin:0;"><label>Given</label><input type="date" class="vx-given"></div>
+        <div class="field" style="margin:0;"><label>Expires</label><input type="date" class="vx-exp"></div>
+        <button class="small-x" onclick="this.parentElement.remove()">✕</button>`;
+      document.getElementById('vax-rows').appendChild(row);
+    }
+    async function saveDog() {
+      const name = document.getElementById('d-name').value.trim();
+      if (!name) { alert('Dog needs a name.'); return; }
+      const btn = document.getElementById('save-dog');
+      btn.disabled = true; btn.textContent = 'Saving...';
+
+      const { data: dog, error } = await db.from('dogs').insert({
+        name,
+        age: parseInt(document.getElementById('d-age').value) || null,
+        gender: document.getElementById('d-gender').value,
+        size: document.getElementById('d-size').value,
+        energy: parseInt(document.getElementById('d-energy').value) || 3,
+        alone_tolerance: parseInt(document.getElementById('d-alone').value) || 4,
+        ok_kids: document.getElementById('d-kids').checked,
+        ok_cats: document.getElementById('d-cats').checked,
+        ok_dogs: document.getElementById('d-dogs').checked,
+        exp_needed: document.getElementById('d-exp').value,
+        urgency: document.getElementById('d-urgency').value || null,
+        bio: document.getElementById('d-bio').value.trim() || null
+      }).select().single();
+
+      if (error) { alert('Error saving: ' + error.message); btn.disabled = false; btn.textContent = 'Save dog'; return; }
+
+      const vaxRows = [...document.querySelectorAll('.vax-add-row')]
+        .map(r => ({
+          dog_id: dog.id,
+          name: r.querySelector('.vx-name').value.trim(),
+          date_given: r.querySelector('.vx-given').value || null,
+          expires: r.querySelector('.vx-exp').value || null
+        }))
+        .filter(v => v.name);
+      if (vaxRows.length) await db.from('vaccinations').insert(vaxRows);
+
+      btn.disabled = false; btn.textContent = 'Save dog';
+      closeModal();
+      document.querySelectorAll('#modal-bg input, #modal-bg textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
+      document.getElementById('vax-rows').innerHTML = '';
+      loadAll();
+    }
+
+    loadAll();
   </script>
 </body>
 </html>

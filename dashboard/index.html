@@ -325,8 +325,10 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
                 <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'} · energy ${dog.energy ?? '?'}/5 · ok alone ${dog.alone_tolerance ?? '?'}h · needs ${dog.exp_needed || '?'} foster</div>
                 ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
               </div>
-              <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
-            </div>
+<div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
+                <button class="decline-btn" style="background:#ddebfa; color:#1f4d7a;" onclick="markDogPlaced('${dog.id}')">Mark placed</button>
+              </div>            </div>
             ${dogVax.length ? `<div class="vax"><div class="vax-title">Vaccinations</div>
               ${dogVax.map(v => { const s = vaxStatus(v.expires); return `<div class="vax-row"><span style="font-weight:600;">${v.name}</span><span style="color:#6a706a;">${v.expires || '—'} · <span class="${s.cls}">${s.label}</span></span></div>`; }).join('')}
             </div>` : ''}

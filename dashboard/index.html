@@ -7,10 +7,10 @@
   <meta name="robots" content="noindex">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // ==== same two values as your other pages ====
+    // ==== copy these two lines from foster/index.html ====
     const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
-    // ============================================
+    // =====================================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     db.auth.getSession().then(({ data: { session } }) => {
       if (!session) location.replace('/login');
@@ -66,11 +66,15 @@
     .no-match, .empty-state { font-size: 13px; color: #8a908a; font-style: italic; }
     .empty-state { background: #fff; border: 1px dashed #d8d4c8; border-radius: 16px; padding: 28px; text-align: center; }
     .boost-tag { font-size: 10px; background: #fde9d2; color: #8a521f; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
+    .lc-matched { background: #e8f5ec; color: #1f3a25; }
+    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
+    .lc-placed { background: #ddebfa; color: #1f4d7a; }
+    .lc-finished { background: #2a2e2a; color: #faf8f2; }
     .approve-btn, .decline-btn { font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
     .approve-btn { background: #c2edca; color: #1f3a25; }
     .decline-btn { background: #fde2e2; color: #8a1f1f; }
     .pending-info { font-size: 13px; color: #4a504a; margin-top: 6px; line-height: 1.6; }
-    /* modal */
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(42,46,42,0.5); z-index: 50; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 16px; }
     .modal { background: #faf8f2; border-radius: 18px; max-width: 560px; width: 100%; padding: 28px; }
     .modal h2 { font-size: 22px; margin-bottom: 16px; }
@@ -81,7 +85,6 @@
     }
     .field textarea { min-height: 70px; resize: vertical; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     .check-line { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
     .check-line label { display: flex; align-items: center; gap: 6px; font-weight: 600; }
     .vax-add-row { display: grid; grid-template-columns: 2fr 1.5fr 1.5fr auto; gap: 8px; margin-bottom: 8px; align-items: end; }
@@ -91,7 +94,7 @@
     .save-btn { background: #2a2e2a; color: #faf8f2; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 2; }
     .save-btn:disabled { background: #8a908a; }
     .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
-    @media (max-width: 600px) { .three-col, .two-col, .vax-add-row { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .two-col, .vax-add-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -124,7 +127,6 @@
     <p class="footer-note">Tether · live database · 2026</p>
   </div>
 
-  <!-- ADD A DOG MODAL -->
   <div class="modal-bg" id="modal-bg">
     <div class="modal">
       <h2>Add a dog</h2>
@@ -166,16 +168,14 @@
 
   <script>
     const TODAY = new Date();
-  let dogsData = [], fostersData = [], vaxData = [], matchesData = [];
+    let dogsData = [], fostersData = [], vaxData = [], matchesData = [];
 
-    // ---------- LOAD EVERYTHING ----------
     async function loadAll() {
-      cconst [dogsRes, fostersRes, vaxRes, matchesRes] = await Promise.all([
+      const [dogsRes, fostersRes, vaxRes, matchesRes] = await Promise.all([
         db.from('dogs').select('*').eq('status', 'available').order('created_at', { ascending: false }),
         db.from('fosters').select('*'),
-       db.from('vaccinations').select('*'),
+        db.from('vaccinations').select('*'),
         db.from('matches').select('*')
-      ]);
       ]);
       dogsData = dogsRes.data || [];
       fostersData = fostersRes.data || [];
@@ -184,19 +184,18 @@
       render();
     }
 
-    // ---------- MATCHING (unchanged spec, vetting enforced) ----------
     function hardFilter(dog, f) {
-const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') || f.visitor_kids;
+      const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') || f.visitor_kids;
       const dogsPresent = (f.has_dogs && f.has_dogs !== 'None') || f.visitor_dogs;
       const catsPresent = (f.has_cats && f.has_cats !== 'None') || f.visitor_cats;
       if (!dog.ok_kids && kidsPresent) return "kids";
       if (!dog.ok_cats && catsPresent) return "cats";
       if (!dog.ok_dogs && dogsPresent) return "dogs";
       if (f.allergies) return "allergies";
-      if (dog.exp_needed === "experienced" && f.foster_count === null && f.training === null) return "experience";
       if (f.landlord_ok === 'No') return "landlord";
       return null;
     }
+
     function softScore(dog, f) {
       let pts = 0;
       const energyPref = f.energy_pref || 3;
@@ -205,7 +204,7 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       const aloneMap = { '0-2': 1, '2-4': 3, '4-6': 5, '6-8': 7, '8+': 9 };
       const fAlone = aloneMap[f.alone_hours] || 5;
       pts += (fAlone <= (dog.alone_tolerance || 4)) ? 10 : Math.max(0, 10 - (fAlone - dog.alone_tolerance) * 3);
-      pts += 25; // household compat survived hard filters
+      pts += 25;
       const sizeOk = !f.size_pref || f.size_pref === 'No preference' || f.size_pref.toLowerCase() === dog.size;
       pts += sizeOk ? 12 : 6;
       pts += 8;
@@ -218,6 +217,7 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       pts += aOk ? 5 : 2;
       return Math.min(100, Math.round(pts));
     }
+
     function matchesFor(dog) {
       const threshold = dog.urgency ? 60 : 75;
       return fostersData
@@ -233,7 +233,6 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
         .sort((a, b) => b.score - a.score);
     }
 
-    // ---------- VETTING ACTIONS ----------
     async function setVetStatus(fosterId, status) {
       const { data: { session } } = await db.auth.getSession();
       await db.from('fosters').update({
@@ -244,14 +243,12 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       loadAll();
     }
 
-    // ---------- DOG STATUS ----------
     async function markDogPlaced(dogId) {
       if (!confirm('Mark this dog as placed? They will leave the active list.')) return;
       await db.from('dogs').update({ status: 'placed' }).eq('id', dogId);
       loadAll();
     }
 
-    // ---------- MATCH LIFECYCLE (persists to database) ----------
     const LIFECYCLE = ['matched', 'contacted', 'placed', 'finished'];
     async function advanceMatch(dogId, fosterId, currentStatus) {
       const next = LIFECYCLE[(LIFECYCLE.indexOf(currentStatus) + 1) % LIFECYCLE.length];
@@ -266,7 +263,6 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       loadAll();
     }
 
-    // ---------- VAX STATUS ----------
     function vaxStatus(expires) {
       if (!expires) return { cls: "vax-ok", label: "no expiry set" };
       const days = Math.floor((new Date(expires) - TODAY) / 86400000);
@@ -275,7 +271,6 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       return { cls: "vax-ok", label: "current" };
     }
 
-    // ---------- RENDER ----------
     function render() {
       const pending = fostersData.filter(f => f.vet_status === 'pending');
       const vetted = fostersData.filter(f => f.vet_status === 'vetted');
@@ -306,12 +301,7 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
                 </div>
               </div>
               <div style="display:flex; gap:8px;">
-                .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
-    .lc-matched { background: #e8f5ec; color: #1f3a25; }
-    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
-    .lc-placed { background: #ddebfa; color: #1f4d7a; }
-    .lc-finished { background: #2a2e2a; color: #faf8f2; }
-            button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+                <button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
                 <button class="decline-btn" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
               </div>
             </div>
@@ -330,10 +320,11 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
                 <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'} · energy ${dog.energy ?? '?'}/5 · ok alone ${dog.alone_tolerance ?? '?'}h · needs ${dog.exp_needed || '?'} foster</div>
                 ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
               </div>
-<div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+              <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
                 <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
                 <button class="decline-btn" style="background:#ddebfa; color:#1f4d7a;" onclick="markDogPlaced('${dog.id}')">Mark placed</button>
-              </div>            </div>
+              </div>
+            </div>
             ${dogVax.length ? `<div class="vax"><div class="vax-title">Vaccinations</div>
               ${dogVax.map(v => { const s = vaxStatus(v.expires); return `<div class="vax-row"><span style="font-weight:600;">${v.name}</span><span style="color:#6a706a;">${v.expires || '—'} · <span class="${s.cls}">${s.label}</span></span></div>`; }).join('')}
             </div>` : ''}
@@ -341,27 +332,27 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
               <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}% (vetted fosters only)</div>
               ${list.length === 0
                 ? `<div class="no-match">No vetted fosters above threshold yet.</div>`
-                : list.map(m => `
+                : list.map(m => {
+                  const saved = matchesData.find(x => x.dog_id === dog.id && x.foster_id === m.foster.id);
+                  const st = saved ? saved.status : 'matched';
+                  const cls = { matched:'lc-matched', contacted:'lc-contacted', placed:'lc-placed', finished:'lc-finished' }[st];
+                  return `
                   <div class="match-row">
                     <div class="match-info">
                       <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
                       <div class="fdetail">${m.foster.city || '?'}, ${m.foster.state || '?'} · ${m.foster.housing || '?'} · ${m.foster.training || '?'} · away ${m.foster.alone_hours || '?'}h/day</div>
                     </div>
-<div style="display:flex; align-items:center; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
                       <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
-                      ${(() => {
-                        const saved = matchesData.find(x => x.dog_id === dog.id && x.foster_id === m.foster.id);
-                        const st = saved ? saved.status : 'matched';
-                        const cls = { matched:'lc-matched', contacted:'lc-contacted', placed:'lc-placed', finished:'lc-finished' }[st];
-                        return `<button class="lifecycle ${cls}" onclick="advanceMatch('${dog.id}','${m.foster.id}','${st}')">${st[0].toUpperCase() + st.slice(1)}</button>`;
-                      })()}
-                    </div>                  </div>`).join('')}
+                      <button class="lifecycle ${cls}" onclick="advanceMatch('${dog.id}','${m.foster.id}','${st}')">${st[0].toUpperCase() + st.slice(1)}</button>
+                    </div>
+                  </div>`;
+                }).join('')}
             </div>
           </div>`;
         }).join('');
     }
 
-    // ---------- ADD A DOG ----------
     function openModal() { document.getElementById('modal-bg').style.display = 'flex'; if (!document.querySelector('.vax-add-row')) addVaxRow(); }
     function closeModal() { document.getElementById('modal-bg').style.display = 'none'; }
     function addVaxRow() {
@@ -379,7 +370,6 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       if (!name) { alert('Dog needs a name.'); return; }
       const btn = document.getElementById('save-dog');
       btn.disabled = true; btn.textContent = 'Saving...';
-
       const { data: dog, error } = await db.from('dogs').insert({
         name,
         age: parseInt(document.getElementById('d-age').value) || null,
@@ -394,9 +384,7 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
         urgency: document.getElementById('d-urgency').value || null,
         bio: document.getElementById('d-bio').value.trim() || null
       }).select().single();
-
       if (error) { alert('Error saving: ' + error.message); btn.disabled = false; btn.textContent = 'Save dog'; return; }
-
       const vaxRows = [...document.querySelectorAll('.vax-add-row')]
         .map(r => ({
           dog_id: dog.id,
@@ -406,7 +394,6 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
         }))
         .filter(v => v.name);
       if (vaxRows.length) await db.from('vaccinations').insert(vaxRows);
-
       btn.disabled = false; btn.textContent = 'Save dog';
       closeModal();
       document.querySelectorAll('#modal-bg input, #modal-bg textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });

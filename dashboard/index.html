@@ -244,6 +244,28 @@ const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') 
       loadAll();
     }
 
+    // ---------- DOG STATUS ----------
+    async function markDogPlaced(dogId) {
+      if (!confirm('Mark this dog as placed? They will leave the active list.')) return;
+      await db.from('dogs').update({ status: 'placed' }).eq('id', dogId);
+      loadAll();
+    }
+
+    // ---------- MATCH LIFECYCLE (persists to database) ----------
+    const LIFECYCLE = ['matched', 'contacted', 'placed', 'finished'];
+    async function advanceMatch(dogId, fosterId, currentStatus) {
+      const next = LIFECYCLE[(LIFECYCLE.indexOf(currentStatus) + 1) % LIFECYCLE.length];
+      const { data: existing } = await db.from('matches')
+        .select('id').eq('dog_id', dogId).eq('foster_id', fosterId).maybeSingle();
+      if (existing) {
+        await db.from('matches').update({ status: next }).eq('id', existing.id);
+      } else {
+        await db.from('matches').insert({ dog_id: dogId, foster_id: fosterId, status: next });
+      }
+      if (next === 'placed') await db.from('dogs').update({ status: 'placed' }).eq('id', dogId);
+      loadAll();
+    }
+
     // ---------- VAX STATUS ----------
     function vaxStatus(expires) {
       if (!expires) return { cls: "vax-ok", label: "no expiry set" };

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Fosters — Tether</title>
+  <meta name="robots" content="noindex">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ==== paste your two working credential lines here ====
+    const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    // ======================================================
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (!session) location.replace('/login');
+      else document.documentElement.style.visibility = 'visible';
+    });
+  </script>
+  <style>html { visibility: hidden; }</style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; }
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+    .topbar { background: #2a2e2a; color: #faf8f2; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .topbar .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 20px; color: #faf8f2; text-decoration: none; }
+    .signout-btn { background: transparent; border: 1px solid #4a504a; color: #faf8f2; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 64px; }
+    .hello { margin-bottom: 28px; }
+    .hello h1 { font-size: 30px; font-weight: 700; margin-bottom: 4px; }
+    .hello p { font-size: 14px; color: #6a706a; }
+    .stat-line { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .mini-stat { background: #f3efe5; border-radius: 12px; padding: 12px 18px; }
+    .mini-stat .num { font-family: "Fraunces", serif; font-size: 22px; font-weight: 700; }
+    .mini-stat .label { font-size: 11px; color: #6a706a; }
+    .section-head { font-size: 20px; font-weight: 700; margin: 28px 0 12px; font-family: "Fraunces", serif; }
+    .dog-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+    .dog-card.current { border-left: 4px solid #c2edca; }
+    .dog-name { font-size: 20px; font-weight: 700; font-family: "Fraunces", serif; }
+    .dog-meta { font-size: 13px; color: #6a706a; margin-top: 4px; }
+    .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; line-height: 1.6; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+    .badge.current-b { background: #c2edca; color: #1f3a25; }
+    .badge.done-b { background: #2a2e2a; color: #faf8f2; }
+    .badge.other-b { background: #f3efe5; color: #6a706a; }
+    .vax { margin-top: 12px; background: #faf8f2; border-radius: 10px; padding: 10px 14px; }
+    .vax-title { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .vax-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+    .vax-ok { color: #1f7a36; font-weight: 600; }
+    .vax-soon { color: #b07a1f; font-weight: 600; }
+    .vax-expired { color: #b02a2a; font-weight: 700; }
+    .past-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e8e4d8; border-radius: 12px; padding: 12px 18px; margin-bottom: 8px; font-size: 14px; }
+    .past-row .pname { font-weight: 700; }
+    .past-row .pdetail { font-size: 12px; color: #6a706a; }
+    .empty-state { background: #fff; border: 1px dashed #d8d4c8; border-radius: 16px; padding: 28px; text-align: center; font-size: 13px; color: #8a908a; font-style: italic; }
+    .profile-box { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 18px 20px; }
+    .p-line { font-size: 13px; padding: 3px 0; color: #2a2e2a; }
+    .p-line span { color: #6a706a; }
+    .p-note { font-size: 12px; color: #8a908a; margin-top: 10px; }
+    .notfound { background: #fdf3d7; color: #7a5f1f; border-radius: 14px; padding: 20px; font-size: 14px; line-height: 1.6; }
+    .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 36px; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="/">Tether</a>
+    <button class="signout-btn" onclick="db.auth.signOut().then(() => location.replace('/login'))">Sign out</button>
+  </div>
+
+  <div class="wrap">
+    <div id="content"><p style="color:#8a908a; font-size:14px;">Loading your fosters...</p></div>
+    <p class="footer-note">Tether · thank you for fostering · 2026</p>
+  </div>
+
+  <script>
+    const TODAY = new Date();
+
+    function vaxStatus(expires) {
+      if (!expires) return { cls: "vax-ok", label: "no expiry set" };
+      const days = Math.floor((new Date(expires) - TODAY) / 86400000);
+      if (days < 0) return { cls: "vax-expired", label: "EXPIRED " + Math.abs(days) + "d ago" };
+      if (days <= 30) return { cls: "vax-soon", label: "expires in " + days + "d" };
+      return { cls: "vax-ok", label: "current" };
+    }
+
+    async function load() {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return;
+      const email = session.user.email;
+
+      // find my foster record by email
+      const { data: me } = await db.from('fosters').select('*').eq('email', email).maybeSingle();
+      const content = document.getElementById('content');
+
+      if (!me) {
+        content.innerHTML = `
+          <div class="hello"><h1>Hi there 👋</h1></div>
+          <div class="notfound">
+            We couldn't find a foster profile linked to <strong>${email}</strong>.<br><br>
+            If you've signed up as a foster with a different email, or haven't signed up yet,
+            head to the <a href="/foster" style="color:#7a5f1f; font-weight:600;">foster signup</a> —
+            or contact <strong>hello.tether.dog@gmail.com</strong> and we'll sort it out.
+          </div>`;
+        return;
+      }
+
+      // my matches + the dogs involved + their vaccinations
+      const { data: myMatches } = await db.from('matches').select('*').eq('foster_id', me.id);
+      const dogIds = (myMatches || []).map(m => m.dog_id);
+      let dogs = [], vax = [];
+      if (dogIds.length) {
+        const [dogsRes, vaxRes] = await Promise.all([
+          db.from('dogs').select('*').in('id', dogIds),
+          db.from('vaccinations').select('*').in('dog_id', dogIds)
+        ]);
+        dogs = dogsRes.data || [];
+        vax = vaxRes.data || [];
+      }
+
+      const current = (myMatches || []).filter(m => m.status === 'placed')
+        .map(m => dogs.find(d => d.id === m.dog_id)).filter(Boolean);
+      const past = (myMatches || []).filter(m => m.status === 'finished')
+        .map(m => ({ dog: dogs.find(d => d.id === m.dog_id), m })).filter(x => x.dog);
+      const inProgress = (myMatches || []).filter(m => m.status === 'matched' || m.status === 'contacted')
+        .map(m => ({ dog: dogs.find(d => d.id === m.dog_id), m })).filter(x => x.dog);
+
+      const firstName = (me.name || 'friend').split(' ')[0];
+
+      content.innerHTML = `
+        <div class="hello">
+          <h1>Hi, ${firstName} 🐕</h1>
+          <p>Your foster home with ${current.length ? 'a very lucky dog in it' : 'room for the next lucky dog'}.</p>
+        </div>
+
+        <div class="stat-line">
+          <div class="mini-stat"><div class="num">${current.length}</div><div class="label">Current foster${current.length === 1 ? '' : 's'}</div></div>
+          <div class="mini-stat"><div class="num">${past.length}</div><div class="label">Past rescue${past.length === 1 ? '' : 's'}</div></div>
+          <div class="mini-stat"><div class="num">${me.vet_status === 'vetted' ? '✓' : '…'}</div><div class="label">${me.vet_status === 'vetted' ? 'Vetted' : 'Review pending'}</div></div>
+        </div>
+
+        <div class="section-head">Current foster</div>
+        ${current.length === 0
+          ? `<div class="empty-state">No dog in your care right now. When a rescue places one with you, they'll appear here.</div>`
+          : current.map(dog => `
+            <div class="dog-card current">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                <div>
+                  <div class="dog-name">${dog.name}</div>
+                  <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}</div>
+                  ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
+                </div>
+                <span class="badge current-b">In your care</span>
+              </div>
+              ${(() => {
+                const dv = vax.filter(v => v.dog_id === dog.id);
+                if (!dv.length) return '';
+                return `<div class="vax"><div class="vax-title">Vaccinations</div>
+                  ${dv.map(v => { const s = vaxStatus(v.expires); return `<div class="vax-row"><span style="font-weight:600;">${v.name}</span><span style="color:#6a706a;">${v.expires || '—'} · <span class="${s.cls}">${s.label}</span></span></div>`; }).join('')}
+                </div>`;
+              })()}
+            </div>`).join('')}
+
+        ${inProgress.length ? `
+        <div class="section-head">In progress</div>
+        ${inProgress.map(x => `
+          <div class="past-row">
+            <div><span class="pname">${x.dog.name}</span> <span class="pdetail">· ${x.dog.size || '?'} · age ${x.dog.age ?? '?'}</span></div>
+            <span class="badge other-b">${x.m.status === 'contacted' ? 'Rescue reached out' : 'Matched — you may hear soon'}</span>
+          </div>`).join('')}` : ''}
+
+        <div class="section-head">Past rescues</div>
+        ${past.length === 0
+          ? `<div class="empty-state">Your past rescues will live here — every dog you help gets remembered.</div>`
+          : past.map(x => `
+            <div class="past-row">
+              <div><span class="pname">${x.dog.name}</span> <span class="pdetail">· ${x.dog.size || '?'} · ${x.dog.gender || '?'} · age ${x.dog.age ?? '?'}</span></div>
+              <span class="badge done-b">${x.dog.status === 'adopted' ? 'Adopted 🎉' : 'Completed 💚'}</span>
+            </div>`).join('')}
+
+        <div class="section-head">Your profile</div>
+        <div class="profile-box">
+          <div class="p-line">${me.name} <span>· ${me.email}</span></div>
+          <div class="p-line"><span>${me.city || '?'}, ${me.state || '?'} · ${me.housing || '?'} · ${me.yard || 'yard unknown'}</span></div>
+          <div class="p-line"><span>Kids: ${me.kids || '?'} · Dogs: ${me.has_dogs || '?'} · Cats: ${me.has_cats || '?'}</span></div>
+          <div class="p-line"><span>Energy pref ${me.energy_pref || '?'}/5 · away ${me.alone_hours || '?'}h/day · ${me.emergency ? 'open to emergency placements' : 'standard placements'}</span></div>
+          <div class="p-note">Need to update something? Email hello.tether.dog@gmail.com — profile editing is coming soon.</div>
+        </div>
+      `;
+    }
+    load();
+  </script>
+</body>
+</html>

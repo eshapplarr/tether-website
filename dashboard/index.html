@@ -1,3 +1,22 @@
+-- Authenticated users can read everything
+create policy "auth can read dogs" on dogs for select to authenticated using (true);
+create policy "auth can read fosters" on fosters for select to authenticated using (true);
+create policy "auth can read shelters" on shelters for select to authenticated using (true);
+create policy "auth can read matches" on matches for select to authenticated using (true);
+create policy "auth can read vaccinations" on vaccinations for select to authenticated using (true);
+create policy "auth can read broadcasts" on broadcasts for select to authenticated using (true);
+
+-- Authenticated users can add and update dogs + vaccinations
+create policy "auth can insert dogs" on dogs for insert to authenticated with check (true);
+create policy "auth can update dogs" on dogs for update to authenticated using (true);
+create policy "auth can insert vaccinations" on vaccinations for insert to authenticated with check (true);
+
+-- Authenticated users can create and update matches (lifecycle buttons)
+create policy "auth can insert matches" on matches for insert to authenticated with check (true);
+create policy "auth can update matches" on matches for update to authenticated using (true);
+
+-- Authenticated users can update fosters (vetting status changes)
+create policy "auth can update fosters" on fosters for update to authenticated using (true);
 <!DOCTYPE html>
 <html lang="en">
 <head>

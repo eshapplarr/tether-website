@@ -7,10 +7,10 @@
   <meta name="robots" content="noindex">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // ==== copy these two lines from foster/index.html ====
+    // ==== paste your two working credential lines here ====
     const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
-    // =====================================================
+    // ======================================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     db.auth.getSession().then(({ data: { session } }) => {
       if (!session) location.replace('/login');
@@ -63,6 +63,8 @@
     .match-row:last-child { border-bottom: none; }
     .match-info .fname { font-size: 14px; font-weight: 600; }
     .match-info .fdetail { font-size: 12px; color: #6a706a; }
+    .foster-link { color: #1f7a36; text-decoration: underline; cursor: pointer; }
+    .foster-link:hover { color: #17612b; }
     .score { font-family: "Fraunces", serif; font-weight: 700; font-size: 16px; }
     .score.high { color: #1f7a36; }
     .score.mid { color: #8a6d1f; }
@@ -101,6 +103,14 @@
     .cancel-btn { background: transparent; border: 1px solid #d8d4c8; color: #4a504a; font-size: 14px; font-weight: 600; padding: 12px 20px; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 1; }
     .save-btn { background: #2a2e2a; color: #faf8f2; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 2; }
     .save-btn:disabled { background: #8a908a; }
+    .profile-section { background: #fff; border: 1px solid #e8e4d8; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
+    .profile-section .ps-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6a706a; margin-bottom: 8px; }
+    .profile-section .ps-line { font-size: 13px; color: #2a2e2a; padding: 2px 0; }
+    .profile-section .ps-line span { color: #6a706a; }
+    .vet-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-left: 6px; }
+    .vt-vetted { background: #c2edca; color: #1f3a25; }
+    .vt-pending { background: #fdf3d7; color: #7a5f1f; }
+    .vt-declined { background: #fde2e2; color: #8a1f1f; }
     .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 32px; }
     @media (max-width: 600px) { .two-col, .vax-add-row { grid-template-columns: 1fr; } }
   </style>
@@ -116,14 +126,12 @@
   </div>
 
   <div class="wrap">
-    <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter Dashboard</h1>
-    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Matching engine v0.2 · vetted fosters only</p>
+    <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter &amp; Rescue Dashboard</h1>
+    <p style="font-size: 14px; color: #6a706a; margin-bottom: 24px;">Matching engine v0.3 · vetted fosters only</p>
 
     <div class="stats" id="stats"></div>
 
-    <div class="section-head">
-      <h2>Pending foster reviews</h2>
-    </div>
+    <div class="section-head"><h2>Pending foster reviews</h2></div>
     <div id="pending"></div>
 
     <div class="section-head">
@@ -132,19 +140,16 @@
     </div>
     <div id="dogs-available"></div>
 
-    <div class="section-head">
-      <h2>In foster</h2>
-    </div>
+    <div class="section-head"><h2>In foster</h2></div>
     <div id="dogs-fostered"></div>
 
-    <div class="section-head">
-      <h2>Adopted</h2>
-    </div>
+    <div class="section-head"><h2>Adopted</h2></div>
     <div id="dogs-adopted"></div>
 
     <p class="footer-note">Tether · live database · 2026</p>
   </div>
 
+  <!-- ADD A DOG MODAL -->
   <div class="modal-bg" id="modal-bg">
     <div class="modal">
       <h2>Add a dog</h2>
@@ -171,7 +176,7 @@
         <div class="field"><label>Urgency</label>
           <select id="d-urgency"><option value="">None</option><option value="medical">Medical</option><option value="kennel stress">Kennel stress</option><option value="capacity">Capacity emergency</option></select></div>
       </div>
-      <div class="field"><label>Bio</label><textarea id="d-bio" placeholder="Who is this dog? Their story, their quirks, what home fits them..."></textarea></div>
+      <div class="field"><label>Bio</label><textarea id="d-bio" placeholder="Who is this dog?"></textarea></div>
       <div class="field">
         <label>Vaccinations</label>
         <div id="vax-rows"></div>
@@ -184,21 +189,33 @@
     </div>
   </div>
 
+  <!-- FOSTER PROFILE MODAL -->
+  <div class="modal-bg" id="profile-bg">
+    <div class="modal">
+      <div id="profile-content"></div>
+      <div class="modal-actions">
+        <button class="cancel-btn" style="flex:1;" onclick="closeProfile()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const TODAY = new Date();
-    let dogsData = [], fostersData = [], vaxData = [], matchesData = [];
+    let dogsData = [], fostersData = [], vaxData = [], matchesData = [], sheltersData = [];
 
     async function loadAll() {
-      const [dogsRes, fostersRes, vaxRes, matchesRes] = await Promise.all([
+      const [dogsRes, fostersRes, vaxRes, matchesRes, sheltersRes] = await Promise.all([
         db.from('dogs').select('*').order('created_at', { ascending: false }),
         db.from('fosters').select('*'),
         db.from('vaccinations').select('*'),
-        db.from('matches').select('*')
+        db.from('matches').select('*'),
+        db.from('shelters').select('*')
       ]);
       dogsData = dogsRes.data || [];
       fostersData = fostersRes.data || [];
       vaxData = vaxRes.data || [];
       matchesData = matchesRes.data || [];
+      sheltersData = sheltersRes.data || [];
       render();
     }
 
@@ -264,6 +281,7 @@
         vetted_by: session?.user?.email || 'unknown',
         vetted_at: new Date().toISOString()
       }).eq('id', fosterId);
+      closeProfile();
       loadAll();
     }
 
@@ -303,6 +321,68 @@
       </div>`;
     }
 
+    // ---------- FOSTER PROFILE PANEL (Piece 3) ----------
+    function openProfile(fosterId) {
+      const f = fostersData.find(x => x.id === fosterId);
+      if (!f) return;
+      const shelter = sheltersData.find(s => s.id === f.shelter_id);
+      const history = matchesData
+        .filter(m => m.foster_id === f.id)
+        .map(m => {
+          const dog = dogsData.find(d => d.id === m.dog_id);
+          return dog ? `<div class="ps-line">${dog.name} <span>· ${m.status}</span></div>` : '';
+        }).join('') || '<div class="ps-line"><span>No dog history yet.</span></div>';
+      const vetTag = f.vet_status === 'vetted' ? '<span class="vet-tag vt-vetted">Vetted</span>'
+        : f.vet_status === 'declined' ? '<span class="vet-tag vt-declined">Declined</span>'
+        : '<span class="vet-tag vt-pending">Pending</span>';
+
+      document.getElementById('profile-content').innerHTML = `
+        <h2 style="margin-bottom:4px;">${f.name || 'Unnamed'} ${vetTag}</h2>
+        <p style="font-size:13px; color:#6a706a; margin-bottom:16px;">
+          ${shelter ? 'Signed up with ' + shelter.name : 'No rescue selected'}
+          ${f.vetted_by ? ' · reviewed by ' + f.vetted_by + (f.vetted_at ? ' on ' + f.vetted_at.slice(0,10) : '') : ''}
+        </p>
+        <div class="profile-section">
+          <div class="ps-title">Contact</div>
+          <div class="ps-line">${f.email || '—'} <span>· ${f.phone || 'no phone'}</span></div>
+          <div class="ps-line"><span>${f.city || '?'}, ${f.state || '?'} ${f.zip || ''}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Home</div>
+          <div class="ps-line">${f.housing || '?'} <span>· ${f.yard || 'yard unknown'} · ${f.rent_own === 'rent' ? 'Rents (landlord: ' + (f.landlord_ok || '?') + ')' : 'Owns'}</span></div>
+          <div class="ps-line"><span>Insurance restrictions: ${f.insurance_restrictions || 'not answered'}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Household</div>
+          <div class="ps-line"><span>Kids: ${f.kids || '?'} · Dogs: ${f.has_dogs || '?'} · Cats: ${f.has_cats || '?'} · Other: ${f.other_pets || 'none'}</span></div>
+          <div class="ps-line"><span>Allergies: ${f.allergies ? 'YES' : 'no'} · Visitors: ${[f.visitor_kids && 'kids', f.visitor_dogs && 'dogs', f.visitor_cats && 'cats'].filter(Boolean).join(', ') || 'none regular'}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Experience &amp; lifestyle</div>
+          <div class="ps-line"><span>Fostered: ${f.foster_count || '?'} · Training: ${f.training || '?'} · Medical exp: ${f.medical_exp ? 'yes' : 'no'} · Behavioral exp: ${f.behavioral_exp ? 'yes' : 'no'}</span></div>
+          <div class="ps-line"><span>Rehomed before: ${f.rehomed_before || 'not answered'}</span></div>
+          <div class="ps-line"><span>Away ${f.alone_hours || '?'}h/day · Exercise: ${f.exercise || '?'} · Energy pref ${f.energy_pref || '?'}/5 · ${f.schedule || 'schedule unknown'}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Care plans</div>
+          <div class="ps-line"><span>Day/night: ${f.day_night_plan || '—'} · Travel: ${f.travel_plan || '—'}</span></div>
+          <div class="ps-line"><span>Vet: ${f.vet_contact || 'not provided'} · Food cost: ${f.food_cost_ok ? 'will provide' : 'ask rescue'}</span></div>
+          ${f.notes ? '<div class="ps-line"><span>Notes: ' + f.notes + '</span></div>' : ''}
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Dog history</div>
+          ${history}
+        </div>
+        ${f.vet_status === 'pending' ? `
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button class="approve-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+          <button class="decline-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
+        </div>` : ''}
+      `;
+      document.getElementById('profile-bg').style.display = 'flex';
+    }
+    function closeProfile() { document.getElementById('profile-bg').style.display = 'none'; }
+
     function render() {
       const pending = fostersData.filter(f => f.vet_status === 'pending');
       const vetted = fostersData.filter(f => f.vet_status === 'vetted');
@@ -325,17 +405,17 @@
 
       document.getElementById("pending").innerHTML = pending.length === 0
         ? `<div class="empty-state">No pending foster signups. New signups from the website appear here for review.</div>`
-        : pending.map(f => `
+        : pending.map(f => {
+          const shelter = sheltersData.find(s => s.id === f.shelter_id);
+          return `
           <div class="pending-card">
             <div class="dog-head">
               <div>
-                <div class="dog-name" style="font-size:16px;">${f.name || 'Unnamed'}</div>
+                <div class="dog-name" style="font-size:16px;"><span class="foster-link" onclick="openProfile('${f.id}')">${f.name || 'Unnamed'}</span></div>
                 <div class="pending-info">
-                  ${f.city || '?'}, ${f.state || '?'} · ${f.housing || '?'} · ${f.yard || 'yard unknown'} · ${f.rent_own === 'rent' ? 'Rents (landlord: ' + (f.landlord_ok || '?') + ')' : 'Owns'}<br>
+                  ${shelter ? '<strong>' + shelter.name + '</strong> · ' : ''}${f.city || '?'}, ${f.state || '?'} · ${f.housing || '?'}<br>
                   Kids: ${f.kids || '?'} · Dogs: ${f.has_dogs || '?'} · Cats: ${f.has_cats || '?'} · Allergies: ${f.allergies ? 'YES' : 'no'}<br>
-                  Fostered: ${f.foster_count || '?'} · Training: ${f.training || '?'} · Rehomed before: ${f.rehomed_before || 'not answered'}<br>
-                  Vet: ${f.vet_contact || 'not provided'} · Day/night: ${f.day_night_plan || '—'} · Travel: ${f.travel_plan || '—'}
-                  ${f.notes ? '<br>Notes: ' + f.notes : ''}
+                  <span style="color:#8a908a;">Click name for full profile</span>
                 </div>
               </div>
               <div style="display:flex; gap:8px;">
@@ -343,7 +423,8 @@
                 <button class="decline-btn" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
               </div>
             </div>
-          </div>`).join('');
+          </div>`;
+        }).join('');
 
       document.getElementById("dogs-available").innerHTML = available.length === 0
         ? `<div class="empty-state">No available dogs. Click "+ Add a dog" to add one — matches compute instantly.</div>`
@@ -371,7 +452,7 @@
                   return `
                   <div class="match-row">
                     <div class="match-info">
-                      <div class="fname">${m.foster.name} ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
+                      <div class="fname"><span class="foster-link" onclick="openProfile('${m.foster.id}')">${m.foster.name}</span> ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
                       <div class="fdetail">${m.foster.city || '?'}, ${m.foster.state || '?'} · ${m.foster.housing || '?'} · ${m.foster.training || '?'} · away ${m.foster.alone_hours || '?'}h/day</div>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
@@ -394,7 +475,7 @@
               <div>
                 <div class="dog-name">${dog.name}</div>
                 <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}</div>
-                <div class="foster-with">🏠 In foster with ${f ? f.name : 'unknown'}${f && f.city ? ' · ' + f.city + ', ' + (f.state || '') : ''}</div>
+                <div class="foster-with">🏠 In foster with ${f ? `<span class="foster-link" onclick="openProfile('${f.id}')">${f.name}</span>` : 'unknown'}${f && f.city ? ' · ' + f.city + ', ' + (f.state || '') : ''}</div>
                 ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
               </div>
               <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
@@ -417,7 +498,7 @@
           <div class="adopted-row">
             <div>
               <span class="aname">${dog.name}</span>
-              <span class="adetail"> · ${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}${f ? ' · adopted via ' + f.name : ''}</span>
+              <span class="adetail"> · ${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}${f ? ' · adopted via <span class="foster-link" onclick="openProfile(\\'' + f.id + '\\')">' + f.name + '</span>' : ''}</span>
             </div>
             <span class="badge lc-finished" style="background:#2a2e2a; color:#faf8f2;">Adopted 🎉</span>
           </div>`;

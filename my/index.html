@@ -8,8 +8,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ==== paste your two working credential lines here ====
-    const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4
+";
     // ======================================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     db.auth.getSession().then(({ data: { session } }) => {

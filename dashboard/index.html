@@ -498,8 +498,7 @@
           <div class="adopted-row">
             <div>
               <span class="aname">${dog.name}</span>
-              <span class="adetail"> · ${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}${f ? ' · adopted via <span class="foster-link" onclick="openProfile(\\'' + f.id + '\\')">' + f.name + '</span>' : ''}</span>
-            </div>
+<span class="adetail"> · ${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'}${f ? ` · adopted via <span class="foster-link" onclick="openProfile('${f.id}')">${f.name}</span>` : ''}</span>            </div>
             <span class="badge lc-finished" style="background:#2a2e2a; color:#faf8f2;">Adopted 🎉</span>
           </div>`;
         }).join('');

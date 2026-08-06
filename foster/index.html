@@ -84,6 +84,16 @@
     <form id="foster-form">
 
       <!-- SECTION A -->
+      <!-- SECTION 0: Which rescue -->
+      <div class="section">
+        <div class="section-title">Your rescue</div>
+        <div class="field">
+          <label>Which shelter or rescue are you signing up with? *</label>
+          <select id="f-shelter" required>
+            <option value="">Loading rescues...</option>
+          </select>
+        </div>
+      </div>
       <div class="section">
         <div class="section-title">About you</div>
         <div class="two-col">
@@ -315,7 +325,15 @@
     // ============================================
 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+// Load verified shelters/rescues into the dropdown; support ?shelter= links
+    (async () => {
+      const { data: shelters } = await db.from('shelters').select('id, name').eq('verified', true).order('name');
+      const sel = document.getElementById('f-shelter');
+      sel.innerHTML = '<option value="">Select one</option>' +
+        (shelters || []).map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      const pre = new URLSearchParams(location.search).get('shelter');
+      if (pre) sel.value = pre;
+    })();
     function toggleLandlord(val) {
       document.getElementById('landlord-field').style.display = val === 'rent' ? 'block' : 'none';
     }
@@ -337,6 +355,7 @@
       errBox.style.display = 'none';
 
       const row = {
+        shelter_id: val('f-shelter'),
         name: val('f-name'),
         email: val('f-email'),
         phone: val('f-phone'),

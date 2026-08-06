@@ -9,7 +9,7 @@
   <script>
     // ==== copy these two lines from foster/index.html ====
     const SUPABASE_URL = "https://flfvbymaaqwrtprmlqwy.supabase.co";
-    const SUPABASE_ANON_KEY = "2. eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
     // =====================================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     db.auth.getSession().then(({ data: { session } }) => {

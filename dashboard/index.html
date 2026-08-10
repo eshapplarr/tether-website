@@ -294,7 +294,9 @@ async function setDogStatus(dogId, status, confirmMsg) {
           .eq('dog_id', dogId).eq('status', 'placed');
       }
       loadAll();
-  const LIFECYCLE = ['matched', 'contacted', 'placed', 'finished'];
+    }
+
+    const LIFECYCLE = ['matched', 'contacted', 'placed', 'finished'];
     async function advanceMatch(dogId, fosterId, currentStatus) {
       const next = LIFECYCLE[(LIFECYCLE.indexOf(currentStatus) + 1) % LIFECYCLE.length];
       const { data: existing } = await db.from('matches')

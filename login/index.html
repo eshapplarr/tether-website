@@ -69,12 +69,13 @@
       location.reload();
     }
 
-    async function resolveRole(email) {
+   async function resolveRole(email) {
       const { data: roleRow } = await db.from('user_roles').select('*').eq('email', email).maybeSingle();
-      if (roleRow) return roleRow;
       const { data: fosterRow } = await db.from('fosters').select('id').eq('email', email).maybeSingle();
-      if (fosterRow) return { role: 'foster' };
+      if (roleRow) return { role: roleRow.role, alsoFoster: !!fosterRow };
+      if (fosterRow) return { role: 'foster', alsoFoster: true };
       return null;
+    }
     }
 
     async function showSession(session) {
@@ -87,14 +88,16 @@
       area.innerHTML = `<div class="role-tag">checking access...</div>`;
       const roleRow = await resolveRole(session.user.email);
 
-      if (!roleRow) {
+     if (!roleRow) {
         area.innerHTML = `<div class="notauth">This account isn't authorized yet. If you're a shelter partner or foster, contact <strong>hello.tether.dog@gmail.com</strong> and we'll set you up.</div>`;
-      } else if (roleRow.role === 'admin') {
-        area.innerHTML = `<div class="role-tag">Tether admin</div><br><a class="go-btn" href="/dashboard">Go to dashboard →</a>`;
-      } else if (roleRow.role === 'shelter') {
-        area.innerHTML = `<div class="role-tag">Shelter partner</div><br><a class="go-btn" href="/dashboard">Go to dashboard →</a>`;
       } else if (roleRow.role === 'foster') {
         area.innerHTML = `<div class="role-tag">Foster</div><br><a class="go-btn" href="/my">Go to my fosters →</a>`;
+      } else {
+        const label = roleRow.role === 'admin' ? 'Tether admin' : 'Shelter partner';
+        const fosterLink = roleRow.alsoFoster
+          ? `<br><a class="go-btn" style="background:#2a2e2a;" href="/my">My foster home →</a>`
+          : '';
+        area.innerHTML = `<div class="role-tag">${label}</div><br><a class="go-btn" href="/dashboard">Go to dashboard →</a>${fosterLink}`;
       }
     }
 

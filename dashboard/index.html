@@ -154,8 +154,7 @@
   <!-- ADD A DOG MODAL -->
   <div class="modal-bg" id="modal-bg">
     <div class="modal">
-      <h2>Add a dog</h2>
-      <div class="two-col">
+ <h2 id="modal-title">Add a dog</h2>      <div class="two-col">
         <div class="field"><label>Name *</label><input type="text" id="d-name"></div>
         <div class="field"><label>Age (years)</label><input type="number" id="d-age" min="0" max="25"></div>
         <div class="field"><label>Gender</label>
@@ -179,7 +178,7 @@
           <select id="d-urgency"><option value="">None</option><option value="medical">Medical</option><option value="kennel stress">Kennel stress</option><option value="capacity">Capacity emergency</option></select></div>
       </div>
       <div class="field"><label>Bio</label><textarea id="d-bio" placeholder="Who is this dog?"></textarea></div>
-      <div class="field">
+     <div class="field" id="vax-field">
         <label>Vaccinations</label>
         <div id="vax-rows"></div>
         <button class="small-x" style="border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600;" onclick="addVaxRow()">+ Add vaccination</button>
@@ -203,8 +202,8 @@
 
   <script>
     const TODAY = new Date();
-    let dogsData = [], fostersData = [], vaxData = [], matchesData = [], sheltersData = [];
-
+let dogsData = [], fostersData = [], vaxData = [], matchesData = [], sheltersData = [];
+    let editingDogId = null;
     async function loadAll() {
       const [dogsRes, fostersRes, vaxRes, matchesRes, sheltersRes] = await Promise.all([
         db.from('dogs').select('*').order('created_at', { ascending: false }),
@@ -445,8 +444,10 @@ async function setDogStatus(dogId, status, confirmMsg) {
                 <div class="dog-meta">${dog.size || '?'} · ${dog.gender || '?'} · age ${dog.age ?? '?'} · energy ${dog.energy ?? '?'}/5 · ok alone ${dog.alone_tolerance ?? '?'}h · needs ${dog.exp_needed || '?'} foster</div>
                 ${dog.bio ? `<div class="dog-bio">${dog.bio}</div>` : ''}
               </div>
-              <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
-            </div>
+<div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
+                <button class="action-btn" onclick="openEditModal('${dog.id}')">Edit</button>
+              </div>            </div>
             ${vaxBlock(dog.id)}
             <div class="matches">
               <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}% (vetted fosters only)</div>
@@ -488,8 +489,8 @@ async function setDogStatus(dogId, status, confirmMsg) {
               <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
                 <span class="badge infoster">In foster</span>
                 <div style="display:flex; gap:6px;">
-                  <button class="action-btn" onclick="setDogStatus('${dog.id}','available','Mark ${dog.name} as returned and available again?')">Mark returned</button>
-                  <button class="action-btn dark" onclick="setDogStatus('${dog.id}','adopted','Mark ${dog.name} as adopted? 🎉')">Mark adopted</button>
+<button class="action-btn" onclick="openEditModal('${dog.id}')">Edit</button>
+                  <button class="action-btn" onclick="setDogStatus('${dog.id}','available','Mark ${dog.name} as returned and available again?')">Mark returned</button>                  <button class="action-btn dark" onclick="setDogStatus('${dog.id}','adopted','Mark ${dog.name} as adopted? 🎉')">Mark adopted</button>
                 </div>
               </div>
             </div>
@@ -511,7 +512,47 @@ async function setDogStatus(dogId, status, confirmMsg) {
         }).join('');
     }
 
-    function openModal() { document.getElementById('modal-bg').style.display = 'flex'; if (!document.querySelector('.vax-add-row')) addVaxRow(); }
+    function resetModalFields() {
+      document.querySelectorAll('#modal-bg input, #modal-bg textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
+      document.getElementById('d-gender').value = 'M';
+      document.getElementById('d-size').value = 'medium';
+      document.getElementById('d-energy').value = 3;
+      document.getElementById('d-alone').value = 4;
+      document.getElementById('d-exp').value = 'some';
+      document.getElementById('d-urgency').value = '';
+      document.getElementById('vax-rows').innerHTML = '';
+    }
+    function openModal() {
+      editingDogId = null;
+      resetModalFields();
+      document.getElementById('modal-title').textContent = 'Add a dog';
+      document.getElementById('save-dog').textContent = 'Save dog';
+      document.getElementById('vax-field').style.display = '';
+      document.getElementById('modal-bg').style.display = 'flex';
+      if (!document.querySelector('.vax-add-row')) addVaxRow();
+    }
+    function openEditModal(dogId) {
+      const dog = dogsData.find(d => d.id === dogId);
+      if (!dog) return;
+      editingDogId = dogId;
+      resetModalFields();
+      document.getElementById('d-name').value = dog.name || '';
+      document.getElementById('d-age').value = dog.age ?? '';
+      document.getElementById('d-gender').value = dog.gender || 'M';
+      document.getElementById('d-size').value = dog.size || 'medium';
+      document.getElementById('d-energy').value = dog.energy ?? 3;
+      document.getElementById('d-alone').value = dog.alone_tolerance ?? 4;
+      document.getElementById('d-kids').checked = !!dog.ok_kids;
+      document.getElementById('d-cats').checked = !!dog.ok_cats;
+      document.getElementById('d-dogs').checked = !!dog.ok_dogs;
+      document.getElementById('d-exp').value = dog.exp_needed || 'some';
+      document.getElementById('d-urgency').value = dog.urgency || '';
+      document.getElementById('d-bio').value = dog.bio || '';
+      document.getElementById('modal-title').textContent = 'Edit ' + (dog.name || 'dog');
+      document.getElementById('save-dog').textContent = 'Save changes';
+      document.getElementById('vax-field').style.display = 'none';
+      document.getElementById('modal-bg').style.display = 'flex';
+    }
     function closeModal() { document.getElementById('modal-bg').style.display = 'none'; }
     function addVaxRow() {
       const row = document.createElement('div');
@@ -523,12 +564,13 @@ async function setDogStatus(dogId, status, confirmMsg) {
         <button class="small-x" onclick="this.parentElement.remove()">✕</button>`;
       document.getElementById('vax-rows').appendChild(row);
     }
-    async function saveDog() {
+ async function saveDog() {
       const name = document.getElementById('d-name').value.trim();
       if (!name) { alert('Dog needs a name.'); return; }
       const btn = document.getElementById('save-dog');
+      const label = btn.textContent;
       btn.disabled = true; btn.textContent = 'Saving...';
-      const { data: dog, error } = await db.from('dogs').insert({
+      const fields = {
         name,
         age: parseInt(document.getElementById('d-age').value) || null,
         gender: document.getElementById('d-gender').value,
@@ -541,8 +583,18 @@ async function setDogStatus(dogId, status, confirmMsg) {
         exp_needed: document.getElementById('d-exp').value,
         urgency: document.getElementById('d-urgency').value || null,
         bio: document.getElementById('d-bio').value.trim() || null
-      }).select().single();
-      if (error) { alert('Error saving: ' + error.message); btn.disabled = false; btn.textContent = 'Save dog'; return; }
+      };
+      if (editingDogId) {
+        const { error } = await db.from('dogs').update(fields).eq('id', editingDogId);
+        btn.disabled = false; btn.textContent = label;
+        if (error) { alert('Error saving: ' + error.message); return; }
+        editingDogId = null;
+        closeModal();
+        loadAll();
+        return;
+      }
+      const { data: dog, error } = await db.from('dogs').insert(fields).select().single();
+      if (error) { alert('Error saving: ' + error.message); btn.disabled = false; btn.textContent = label; return; }
       const vaxRows = [...document.querySelectorAll('.vax-add-row')]
         .map(r => ({
           dog_id: dog.id,
@@ -552,10 +604,11 @@ async function setDogStatus(dogId, status, confirmMsg) {
         }))
         .filter(v => v.name);
       if (vaxRows.length) await db.from('vaccinations').insert(vaxRows);
-      btn.disabled = false; btn.textContent = 'Save dog';
+      btn.disabled = false; btn.textContent = label;
       closeModal();
-      document.querySelectorAll('#modal-bg input, #modal-bg textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
-      document.getElementById('vax-rows').innerHTML = '';
+      resetModalFields();
+      loadAll();
+    }
       loadAll();
     }
 

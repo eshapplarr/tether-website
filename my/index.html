@@ -12,9 +12,12 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZnZieW1hYXF3cnRwcm1scXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NTQ1NjQsImV4cCI6MjEwMTUzMDU2NH0.Q8hlAfUg9FWzNTA9No7791IwFovT4fHmjigHSFp58a4";
     // ======================================================
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    db.auth.getSession().then(({ data: { session } }) => {
-      if (!session) location.replace('/login');
-      else document.documentElement.style.visibility = 'visible';
+       db.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        document.documentElement.style.visibility = 'visible';
+      } else if (event === 'INITIAL_SESSION' || event === 'SIGNED_OUT') {
+        location.replace('/login');
+      }
     });
   </script>
   <style>html { visibility: hidden; }</style>

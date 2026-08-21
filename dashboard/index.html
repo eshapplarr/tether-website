@@ -199,12 +199,54 @@
       </div>
     </div>
   </div>
-
+  <!-- EDIT FOSTER MODAL -->
+  <div class="modal-bg" id="fedit-bg">
+    <div class="modal">
+      <h2 id="fedit-title">Edit foster</h2>
+      <div class="two-col">
+        <div class="field"><label>Name</label><input type="text" id="fe-name"></div>
+        <div class="field"><label>Email</label><input type="text" id="fe-email"></div>
+        <div class="field"><label>Phone</label><input type="text" id="fe-phone"></div>
+        <div class="field"><label>City</label><input type="text" id="fe-city"></div>
+        <div class="field"><label>State</label><input type="text" id="fe-state"></div>
+        <div class="field"><label>ZIP</label><input type="text" id="fe-zip"></div>
+        <div class="field"><label>Housing</label>
+          <select id="fe-housing"><option value="">—</option><option>House</option><option>Apartment</option><option>Townhouse</option><option>Other</option></select></div>
+        <div class="field"><label>Yard</label>
+          <select id="fe-yard"><option value="">—</option><option>Fenced yard</option><option>Unfenced yard</option><option>No yard</option></select></div>
+        <div class="field"><label>Rent or own</label>
+          <select id="fe-rentown"><option value="">—</option><option value="own">Own</option><option value="rent">Rent</option></select></div>
+        <div class="field"><label>Landlord allows pets</label>
+          <select id="fe-landlord"><option value="">—</option><option>Yes</option><option>No</option><option>Not sure</option></select></div>
+        <div class="field"><label>Kids at home</label>
+          <select id="fe-kids"><option value="">—</option><option>No kids</option><option>Kids under 6</option><option>Kids 6–12</option><option>Teens only</option></select></div>
+        <div class="field"><label>Other dogs</label>
+          <select id="fe-hasdogs"><option value="">—</option><option>None</option><option>One dog</option><option>Two or more dogs</option></select></div>
+        <div class="field"><label>Cats</label>
+          <select id="fe-hascats"><option value="">—</option><option>None</option><option>One or more cats</option></select></div>
+        <div class="field"><label>Insurance restrictions</label>
+          <select id="fe-insurance"><option value="">—</option><option value="no">No</option><option value="yes">Yes</option><option value="not sure">Not sure</option></select></div>
+      </div>
+      <div class="field"><label>Other pets</label><input type="text" id="fe-otherpets"></div>
+      <div class="field"><label>Household</label>
+        <div class="check-line">
+          <label><input type="checkbox" id="fe-allergies"> Allergies</label>
+          <label><input type="checkbox" id="fe-vkids"> Kids visit</label>
+          <label><input type="checkbox" id="fe-vdogs"> Dogs visit</label>
+          <label><input type="checkbox" id="fe-vcats"> Cats visit</label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeFosterEdit()">Cancel</button>
+        <button class="save-btn" id="save-foster" onclick="saveFoster()">Save changes</button>
+      </div>
+    </div>
+  </div>
   <script>
     const TODAY = new Date();
 let dogsData = [], fostersData = [], vaxData = [], matchesData = [], sheltersData = [];
     let editingDogId = null;
-    async function loadAll() {
+    let editingFosterId = null;    async function loadAll() {
       const [dogsRes, fostersRes, vaxRes, matchesRes, sheltersRes] = await Promise.all([
         db.from('dogs').select('*').order('created_at', { ascending: false }),
         db.from('fosters').select('*'),
@@ -379,8 +421,8 @@ async function setDogStatus(dogId, status, confirmMsg) {
           <div class="ps-title">Dog history</div>
           ${history}
         </div>
-        ${f.vet_status === 'pending' ? `
-        <div style="display:flex; gap:8px; margin-top:4px;">
+        <button class="action-btn" style="width:100%; margin-bottom:10px;" onclick="openFosterEdit('${f.id}')">Edit this profile</button>
+        ${f.vet_status === 'pending' ? `        <div style="display:flex; gap:8px; margin-top:4px;">
           <button class="approve-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
           <button class="decline-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
         </div>` : ''}
@@ -388,7 +430,54 @@ async function setDogStatus(dogId, status, confirmMsg) {
       document.getElementById('profile-bg').style.display = 'flex';
     }
     function closeProfile() { document.getElementById('profile-bg').style.display = 'none'; }
-
+    function openFosterEdit(fosterId) {
+      const f = fostersData.find(x => x.id === fosterId);
+      if (!f) return;
+      editingFosterId = fosterId;
+      const set = (id, val) => document.getElementById(id).value = val ?? '';
+      set('fe-name', f.name); set('fe-email', f.email); set('fe-phone', f.phone);
+      set('fe-city', f.city); set('fe-state', f.state); set('fe-zip', f.zip);
+      set('fe-housing', f.housing); set('fe-yard', f.yard); set('fe-rentown', f.rent_own);
+      set('fe-landlord', f.landlord_ok); set('fe-kids', f.kids); set('fe-hasdogs', f.has_dogs);
+      set('fe-hascats', f.has_cats); set('fe-insurance', f.insurance_restrictions);
+      set('fe-otherpets', f.other_pets);
+      document.getElementById('fe-allergies').checked = !!f.allergies;
+      document.getElementById('fe-vkids').checked = !!f.visitor_kids;
+      document.getElementById('fe-vdogs').checked = !!f.visitor_dogs;
+      document.getElementById('fe-vcats').checked = !!f.visitor_cats;
+      document.getElementById('fedit-title').textContent = 'Edit ' + (f.name || 'foster');
+      closeProfile();
+      document.getElementById('fedit-bg').style.display = 'flex';
+    }
+    function closeFosterEdit() {
+      document.getElementById('fedit-bg').style.display = 'none';
+      editingFosterId = null;
+    }
+    async function saveFoster() {
+      if (!editingFosterId) return;
+      const btn = document.getElementById('save-foster');
+      btn.disabled = true; btn.textContent = 'Saving...';
+      const val = id => document.getElementById(id).value.trim() || null;
+      const { data: { session } } = await db.auth.getSession();
+      const { error } = await db.from('fosters').update({
+        name: val('fe-name'), email: val('fe-email'), phone: val('fe-phone'),
+        city: val('fe-city'), state: val('fe-state'), zip: val('fe-zip'),
+        housing: val('fe-housing'), yard: val('fe-yard'), rent_own: val('fe-rentown'),
+        landlord_ok: val('fe-landlord'), kids: val('fe-kids'), has_dogs: val('fe-hasdogs'),
+        has_cats: val('fe-hascats'), insurance_restrictions: val('fe-insurance'),
+        other_pets: val('fe-otherpets'),
+        allergies: document.getElementById('fe-allergies').checked,
+        visitor_kids: document.getElementById('fe-vkids').checked,
+        visitor_dogs: document.getElementById('fe-vdogs').checked,
+        visitor_cats: document.getElementById('fe-vcats').checked,
+        updated_by: session?.user?.email || 'unknown',
+        updated_at: new Date().toISOString()
+      }).eq('id', editingFosterId);
+      btn.disabled = false; btn.textContent = 'Save changes';
+      if (error) { alert('Error saving: ' + error.message); return; }
+      closeFosterEdit();
+      loadAll();
+    }
     function render() {
       const pending = fostersData.filter(f => f.vet_status === 'pending');
       const vetted = fostersData.filter(f => f.vet_status === 'vetted');

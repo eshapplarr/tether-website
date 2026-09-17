@@ -46,8 +46,37 @@ a.door:hover {
 
     /* Fraunces for all headings */
     h1, h2, h3 { font-family: "Fraunces", serif; }
-
+    .topbar {
+      background: #2a2e2a; padding: 14px 24px; display: flex;
+      justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .topbar .brand {
+      font-family: "Fraunces", serif; font-weight: 700; font-size: 20px;
+      color: #faf8f2; text-decoration: none;
+    }
+    .topbar-links { display: flex; gap: 10px; }
+    .topbar-links a {
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      padding: 7px 16px; border-radius: 999px;
+    }
+    .login-rescue { background: #c2edca; color: #1f3a25; }
+    .login-foster { background: transparent; color: #c2edca; border: 1px solid #4a504a; }
     /* ----- HERO SECTION (top of page) ----- */
+        .topbar {
+      background: #2a2e2a; padding: 14px 24px; display: flex;
+      justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .topbar .brand {
+      font-family: "Fraunces", serif; font-weight: 700; font-size: 20px;
+      color: #faf8f2; text-decoration: none;
+    }
+    .topbar-links { display: flex; gap: 10px; }
+    .topbar-links a {
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      padding: 7px 16px; border-radius: 999px;
+    }
+    .login-rescue { background: #c2edca; color: #1f3a25; }
+    .login-foster { background: transparent; color: #c2edca; border: 1px solid #4a504a; }
     .hero {
       min-height: 88vh;
       display: flex;
@@ -123,8 +152,7 @@ a.door:hover {
 
     .door-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);      gap: 16px;
     }
 
     .door {
@@ -211,6 +239,7 @@ a.door:hover {
       .mission { font-size: 21px; }
       .doors h2, .why h2, .closing h2 { font-size: 27px; }
       .hero { min-height: 70vh; }
+            .door-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -222,8 +251,7 @@ a.door:hover {
       <div class="pill">Launching in Houston</div>
       <h1>Tether</h1>
       <p class="mission">A foster-first platform connecting dogs with homes that fit them.</p>
-      <p class="sub">We're building a smarter way to match shelter dogs with the fosters who fit them — so fewer dogs run out of time waiting for the right home.</p>
-      <a class="contact" href="mailto:hello.tether.dog@gmail.com">Follow along → hello.tether.dog@gmail.com</a>
+      <p class="sub">Tether matches shelter dogs with the fosters who fit them — so fewer dogs run out of time waiting for the right home.</p>      <a class="contact" href="mailto:hello.tether.dog@gmail.com">Follow along → hello.tether.dog@gmail.com</a>
     </div>
   </div>
 
@@ -231,8 +259,7 @@ a.door:hover {
   <div class="doors">
     <div class="doors-inner">
       <h2>One platform. Four doors.</h2>
-      <p class="doors-sub">Whoever you are in a dog's story, Tether is being built for you.</p>
-      <div class="door-grid">
+      <p class="doors-sub">Whoever you are in a dog's story, there's a door for you.</p>      <div class="door-grid">
 
         <a class="door" href="/dashboard" style="text-decoration: none; color: inherit; display: block;">
           <div class="ready">Live demo →</div>
@@ -279,9 +306,6 @@ a.door:hover {
 
   <!-- ===== FOOTER ===== -->
     <div class="footer">
-    Tether · Houston, TX · 2026 · <a href="/privacy" style="color: #c2edca; text-decoration: none;">Privacy</a> · <a href="/login" style="color: #c2edca; text-decoration: none;">Shelter login</a>
-  </div>
-  </div>
-  </div>
+    Tether · Houston, TX · 2026 · <a href="/privacy" style="color: #c2edca; text-decoration: none;">Privacy</a> · <a href="/login" style="color: #c2edca; text-decoration: none;">Login</a>
+  <  </div>
 </body>
-</html>

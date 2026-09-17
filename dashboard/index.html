@@ -227,7 +227,41 @@
         <div class="field"><label>Insurance restrictions</label>
           <select id="fe-insurance"><option value="">—</option><option value="no">No</option><option value="yes">Yes</option><option value="not sure">Not sure</option></select></div>
       </div>
-      <div class="field"><label>Other pets</label><input type="text" id="fe-otherpets"></div>
+      <div class="field"><label>Other pets</label>
+              <div class="two-col">
+        <div class="field"><label>Times fostered</label>
+          <select id="fe-fostercount"><option value="">—</option><option value="1-2">1–2 times</option><option value="3+">3 or more</option><option value="many">Lost count</option></select></div>
+        <div class="field"><label>Training comfort</label>
+          <select id="fe-training"><option value="">—</option><option value="first-time">First-time</option><option value="some">Some experience</option><option value="experienced">Experienced</option><option value="professional">Professional</option></select></div>
+        <div class="field"><label>Hours alone/day</label>
+          <select id="fe-alone"><option value="">—</option><option value="0-2">0–2 hrs</option><option value="2-4">2–4 hrs</option><option value="4-6">4–6 hrs</option><option value="6-8">6–8 hrs</option><option value="8+">8+ hrs</option></select></div>
+        <div class="field"><label>Daily exercise</label>
+          <select id="fe-exercise"><option value="">—</option><option value="minimal">Minimal</option><option value="light">Light</option><option value="moderate">Moderate</option><option value="very active">Very active</option></select></div>
+        <div class="field"><label>Energy preference (1–5)</label><input type="number" id="fe-energy" min="1" max="5"></div>
+        <div class="field"><label>Schedule</label>
+          <select id="fe-schedule"><option value="">—</option><option>Very flexible (work from home / retired)</option><option>Somewhat flexible</option><option>Structured (out of home 9–5)</option><option>Very rigid schedule</option></select></div>
+        <div class="field"><label>Size preference</label>
+          <select id="fe-sizepref"><option value="">—</option><option>No preference</option><option>Small</option><option>Medium</option><option>Large</option></select></div>
+        <div class="field"><label>Gender preference</label>
+          <select id="fe-genderpref"><option value="">—</option><option>No preference</option><option>Female</option><option>Male</option></select></div>
+        <div class="field"><label>Age preference</label>
+          <select id="fe-agepref"><option value="">—</option><option>No preference</option><option>Puppy (0–1 yr)</option><option>Young (1–3 yrs)</option><option>Adult (3–8 yrs)</option><option>Senior (8+ yrs)</option></select></div>
+        <div class="field"><label>Special needs</label>
+          <select id="fe-special"><option value="">—</option><option>No preference</option><option>Yes, open to it</option><option>Depends on the need</option><option>Not at this time</option></select></div>
+      </div>
+      <div class="field"><label>Rehomed before</label><input type="text" id="fe-rehomed"></div>
+      <div class="field"><label>Day/night plan</label><input type="text" id="fe-daynight"></div>
+      <div class="field"><label>Travel plan</label><input type="text" id="fe-travel"></div>
+      <div class="field"><label>Vet contact</label><input type="text" id="fe-vet"></div>
+      <div class="field"><label>Notes</label><textarea id="fe-notes"></textarea></div>
+      <div class="field"><label>Experience &amp; willingness</label>
+        <div class="check-line">
+          <label><input type="checkbox" id="fe-medical"> Medical exp</label>
+          <label><input type="checkbox" id="fe-behavioral"> Behavioral exp</label>
+          <label><input type="checkbox" id="fe-emergency"> Emergency placements</label>
+          <label><input type="checkbox" id="fe-foodcost"> Provides food</label>
+        </div>
+      </div><input type="text" id="fe-otherpets"></div>
       <div class="field"><label>Household</label>
         <div class="check-line">
           <label><input type="checkbox" id="fe-allergies"> Allergies</label>
@@ -445,6 +479,18 @@ async function setDogStatus(dogId, status, confirmMsg) {
       document.getElementById('fe-vkids').checked = !!f.visitor_kids;
       document.getElementById('fe-vdogs').checked = !!f.visitor_dogs;
       document.getElementById('fe-vcats').checked = !!f.visitor_cats;
+            set('fe-fostercount', f.foster_count); set('fe-training', f.training);
+      set('fe-alone', f.alone_hours); set('fe-exercise', f.exercise);
+      set('fe-energy', f.energy_pref); set('fe-schedule', f.schedule);
+      set('fe-sizepref', f.size_pref); set('fe-genderpref', f.gender_pref);
+      set('fe-agepref', f.age_pref); set('fe-special', f.special_needs);
+      set('fe-rehomed', f.rehomed_before); set('fe-daynight', f.day_night_plan);
+      set('fe-travel', f.travel_plan); set('fe-vet', f.vet_contact);
+      set('fe-notes', f.notes);
+      document.getElementById('fe-medical').checked = !!f.medical_exp;
+      document.getElementById('fe-behavioral').checked = !!f.behavioral_exp;
+      document.getElementById('fe-emergency').checked = !!f.emergency;
+      document.getElementById('fe-foodcost').checked = !!f.food_cost_ok;
       document.getElementById('fedit-title').textContent = 'Edit ' + (f.name || 'foster');
       closeProfile();
       document.getElementById('fedit-bg').style.display = 'flex';
@@ -470,6 +516,18 @@ async function setDogStatus(dogId, status, confirmMsg) {
         visitor_kids: document.getElementById('fe-vkids').checked,
         visitor_dogs: document.getElementById('fe-vdogs').checked,
         visitor_cats: document.getElementById('fe-vcats').checked,
+                foster_count: val('fe-fostercount'), training: val('fe-training'),
+        alone_hours: val('fe-alone'), exercise: val('fe-exercise'),
+        energy_pref: parseInt(document.getElementById('fe-energy').value) || null,
+        schedule: val('fe-schedule'), size_pref: val('fe-sizepref'),
+        gender_pref: val('fe-genderpref'), age_pref: val('fe-agepref'),
+        special_needs: val('fe-special'), rehomed_before: val('fe-rehomed'),
+        day_night_plan: val('fe-daynight'), travel_plan: val('fe-travel'),
+        vet_contact: val('fe-vet'), notes: val('fe-notes'),
+        medical_exp: document.getElementById('fe-medical').checked,
+        behavioral_exp: document.getElementById('fe-behavioral').checked,
+        emergency: document.getElementById('fe-emergency').checked,
+        food_cost_ok: document.getElementById('fe-foodcost').checked,
         updated_by: session?.user?.email || 'unknown',
         updated_at: new Date().toISOString()
       }).eq('id', editingFosterId);
@@ -698,9 +756,7 @@ async function setDogStatus(dogId, status, confirmMsg) {
       resetModalFields();
       loadAll();
     }
-      loadAll();
-
-
+  
     loadAll();
   </script>
 </body>

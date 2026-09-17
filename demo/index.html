@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tether — Live Demo</title>
+  <meta name="description" content="See how Tether matches shelter dogs with foster homes. Sample data, no login required.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #faf8f2; color: #2a2e2a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; }
+    h1, h2, h3 { font-family: "Fraunces", serif; }
+    .topbar { background: #2a2e2a; color: #faf8f2; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .topbar .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 20px; color: #faf8f2; text-decoration: none; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .demo-tag { background: #fde9d2; color: #8a521f; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+    .home-btn { background: transparent; border: 1px solid #4a504a; color: #faf8f2; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; text-decoration: none; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+    .demo-banner { background: #f3efe5; border: 1px solid #e8e4d8; border-radius: 14px; padding: 16px 20px; margin-bottom: 26px; font-size: 14px; color: #4a504a; }
+    .demo-banner strong { color: #2a2e2a; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .stat { background: #f3efe5; border-radius: 12px; padding: 16px; }
+    .stat .num { font-family: "Fraunces", serif; font-size: 28px; font-weight: 700; }
+    .stat .label { font-size: 12px; color: #6a706a; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; margin: 28px 0 14px; }
+    .section-head h2 { font-size: 22px; font-weight: 700; }
+    .dog-card, .pending-card { background: #fff; border: 1px solid #e8e4d8; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .dog-card.fostered { border-left: 4px solid #ddebfa; }
+    .dog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .dog-name { font-size: 20px; font-weight: 700; }
+    .dog-meta { font-size: 13px; color: #6a706a; margin-top: 4px; }
+    .dog-bio { font-size: 13px; color: #4a504a; margin-top: 8px; line-height: 1.6; }
+    .foster-with { font-size: 13px; color: #1f4d7a; font-weight: 600; margin-top: 6px; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+    .badge.urgent { background: #fde2e2; color: #8a1f1f; }
+    .badge.standard { background: #e8f5ec; color: #1f3a25; }
+    .badge.infoster { background: #ddebfa; color: #1f4d7a; }
+    .vax { margin-top: 12px; background: #faf8f2; border-radius: 10px; padding: 10px 14px; }
+    .vax-title { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .vax-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+    .vax-ok { color: #1f7a36; font-weight: 600; }
+    .vax-soon { color: #b07a1f; font-weight: 600; }
+    .vax-expired { color: #b02a2a; font-weight: 700; }
+    .matches { margin-top: 14px; border-top: 1px solid #f0ecdf; padding-top: 12px; }
+    .matches-label { font-size: 11px; font-weight: 600; color: #6a706a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f6f3ea; gap: 10px; flex-wrap: wrap; }
+    .match-row:last-child { border-bottom: none; }
+    .match-info .fname { font-size: 14px; font-weight: 600; }
+    .match-info .fdetail { font-size: 12px; color: #6a706a; }
+    .foster-link { color: #1f7a36; text-decoration: underline; cursor: pointer; }
+    .foster-link:hover { color: #17612b; }
+    .score { font-family: "Fraunces", serif; font-weight: 700; font-size: 16px; }
+    .score.high { color: #1f7a36; }
+    .score.mid { color: #8a6d1f; }
+    .no-match, .empty-state { font-size: 13px; color: #8a908a; font-style: italic; }
+    .no-match .why { display: block; font-style: normal; color: #b02a2a; font-weight: 600; margin-top: 5px; font-size: 12px; }
+    .empty-state { background: #fff; border: 1px dashed #d8d4c8; border-radius: 16px; padding: 28px; text-align: center; }
+    .boost-tag { font-size: 10px; background: #fde9d2; color: #8a521f; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .lifecycle { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
+    .lc-matched { background: #e8f5ec; color: #1f3a25; }
+    .lc-contacted { background: #fdf3d7; color: #7a5f1f; }
+    .lc-placed { background: #ddebfa; color: #1f4d7a; }
+    .lc-finished { background: #2a2e2a; color: #faf8f2; }
+    .approve-btn, .decline-btn, .action-btn { font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; }
+    .approve-btn { background: #c2edca; color: #1f3a25; }
+    .decline-btn { background: #fde2e2; color: #8a1f1f; }
+    .action-btn { background: #ddebfa; color: #1f4d7a; }
+    .action-btn.dark { background: #2a2e2a; color: #faf8f2; }
+    .pending-info { font-size: 13px; color: #4a504a; margin-top: 6px; line-height: 1.6; }
+    .adopted-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e8e4d8; border-radius: 12px; padding: 12px 18px; margin-bottom: 8px; font-size: 14px; }
+    .adopted-row .aname { font-weight: 700; }
+    .adopted-row .adetail { font-size: 12px; color: #6a706a; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(42,46,42,0.5); z-index: 50; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 16px; }
+    .modal { background: #faf8f2; border-radius: 18px; max-width: 560px; width: 100%; padding: 28px; }
+    .modal h2 { font-size: 22px; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .cancel-btn { background: transparent; border: 1px solid #d8d4c8; color: #4a504a; font-size: 14px; font-weight: 600; padding: 12px 20px; border-radius: 999px; cursor: pointer; font-family: inherit; flex: 1; }
+    .profile-section { background: #fff; border: 1px solid #e8e4d8; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
+    .profile-section .ps-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6a706a; margin-bottom: 8px; }
+    .profile-section .ps-line { font-size: 13px; color: #2a2e2a; padding: 2px 0; }
+    .profile-section .ps-line span { color: #6a706a; }
+    .vet-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-left: 6px; }
+    .vt-vetted { background: #c2edca; color: #1f3a25; }
+    .vt-pending { background: #fdf3d7; color: #7a5f1f; }
+    .vt-declined { background: #fde2e2; color: #8a1f1f; }
+    .reset-line { text-align: center; margin-top: 30px; }
+    .reset-btn { background: transparent; border: 1px solid #d8d4c8; color: #6a706a; font-size: 13px; font-weight: 600; padding: 9px 20px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+    .reset-btn:hover { background: #f3efe5; }
+    .footer-note { text-align: center; font-size: 12px; color: #8a908a; margin-top: 18px; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="/">Tether</a>
+    <div class="topbar-right">
+      <div class="demo-tag">Sample data</div>
+      <a class="home-btn" href="/">Back to home</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h1 style="font-size: 28px; margin-bottom: 4px;">Shelter &amp; Rescue Dashboard</h1>
+    <p style="font-size: 14px; color: #6a706a; margin-bottom: 20px;">Matching engine v0.3 · vetted fosters only</p>
+
+    <div class="demo-banner">
+      <strong>This is a walkthrough, not the live system.</strong> Every dog and foster below is invented, so you can
+      look around without seeing a real family's information. Click a foster's name to open their full profile,
+      approve someone waiting for review, or click a match status to move it along — matched, contacted, placed,
+      adopted. Nothing you do here is saved.
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="section-head"><h2>Pending foster reviews</h2></div>
+    <div id="pending"></div>
+
+    <div class="section-head"><h2>Available dogs &amp; matches</h2></div>
+    <div id="dogs-available"></div>
+
+    <div class="section-head"><h2>In foster</h2></div>
+    <div id="dogs-fostered"></div>
+
+    <div class="section-head"><h2>Adopted</h2></div>
+    <div id="dogs-adopted"></div>
+
+    <div class="reset-line">
+      <button class="reset-btn" onclick="resetDemo()">Start the walkthrough over</button>
+    </div>
+    <p class="footer-note">Tether · sample data · 2026</p>
+  </div>
+
+  <div class="modal-bg" id="profile-bg">
+    <div class="modal">
+      <div id="profile-content"></div>
+      <div class="modal-actions">
+        <button class="cancel-btn" style="flex:1;" onclick="closeProfile()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TODAY = new Date();
+
+    // Dates are generated relative to today so the vaccination badges
+    // stay meaningful however long this page sits online.
+    function daysOut(n) {
+      const d = new Date(TODAY);
+      d.setDate(d.getDate() + n);
+      return d.toISOString().slice(0, 10);
+    }
+
+    // ===================== SAMPLE DATA =====================
+    // Entirely invented. No real foster, dog, address or email appears here.
+    const SEED_DOGS = [
+      { id: 'd1', name: 'Biscuit', age: 4, gender: 'F', size: 'small', energy: 2, alone_tolerance: 8,
+        ok_kids: true, ok_cats: true, ok_dogs: true, exp_needed: 'first-time', urgency: null, status: 'available',
+        bio: "Sweet, low-key girl who mostly wants a couch and a sunbeam. Housetrained, quiet, walks politely on leash." },
+      { id: 'd2', name: 'Rio', age: 2, gender: 'M', size: 'medium', energy: 4, alone_tolerance: 5,
+        ok_kids: true, ok_cats: false, ok_dogs: true, exp_needed: 'some', urgency: 'kennel stress', status: 'available',
+        bio: "Shutting down in the kennel — pacing, not eating. A different dog outside the building: playful, eager to please. Needs out soon." },
+      { id: 'd3', name: 'Juno', age: 6, gender: 'F', size: 'large', energy: 3, alone_tolerance: 3,
+        ok_kids: false, ok_cats: false, ok_dogs: false, exp_needed: 'experienced', urgency: null, status: 'available',
+        bio: "Deeply bonded to her person once she trusts you, but needs to be the only animal and a home without young kids. Settles beautifully with patience." },
+      { id: 'd4', name: 'Marlow', age: 1, gender: 'M', size: 'medium', energy: 5, alone_tolerance: 4,
+        ok_kids: true, ok_cats: false, ok_dogs: true, exp_needed: 'some', urgency: null, status: 'available',
+        bio: "All legs and enthusiasm. Knows sit, working on everything else. Needs a foster who'll enjoy the puppy energy rather than endure it." },
+      { id: 'd5', name: 'Pepper', age: 7, gender: 'F', size: 'small', energy: 2, alone_tolerance: 6,
+        ok_kids: true, ok_cats: true, ok_dogs: true, exp_needed: 'first-time', urgency: null, status: 'placed',
+        bio: "Came in as a stray and turned out to be somebody's well-trained sweetheart. Nobody ever claimed her." },
+      { id: 'd6', name: 'Otis', age: 3, gender: 'M', size: 'large', energy: 3, alone_tolerance: 5,
+        ok_kids: true, ok_cats: false, ok_dogs: true, exp_needed: 'some', urgency: null, status: 'adopted',
+        bio: "Big, gentle, leans on people. Fostered for six weeks and adopted by someone who met him on a walk." }
+    ];
+
+    const SEED_VAX = [
+      { id: 'v1', dog_id: 'd1', name: 'Rabies', expires: daysOut(210) },
+      { id: 'v2', dog_id: 'd2', name: 'Rabies', expires: daysOut(130) },
+      { id: 'v3', dog_id: 'd3', name: 'Rabies', expires: daysOut(64) },
+      { id: 'v4', dog_id: 'd4', name: 'Bordetella', expires: daysOut(15) },
+      { id: 'v5', dog_id: 'd5', name: 'Rabies', expires: daysOut(-6) },
+      { id: 'v6', dog_id: 'd5', name: 'Bordetella', expires: daysOut(240) }
+    ];
+
+    const SEED_FOSTERS = [
+      { id: 'f1', name: 'Nadia Okonkwo', email: 'sample-nadia@example.com', phone: '(000) 555-0134',
+        city: 'Spring Branch', state: 'TX', zip: '77055', housing: 'House', yard: 'Fenced yard', rent_own: 'own',
+        landlord_ok: null, kids: 'Teens only', has_dogs: 'One dog', has_cats: 'None', other_pets: null,
+        allergies: false, visitor_kids: false, visitor_dogs: false, visitor_cats: false,
+        insurance_restrictions: 'no', foster_count: '3+', training: 'experienced', medical_exp: true,
+        behavioral_exp: true, rehomed_before: 'No', alone_hours: '4-6', exercise: 'moderate', energy_pref: 3,
+        schedule: 'Somewhat flexible', size_pref: 'No preference', gender_pref: 'No preference',
+        age_pref: 'No preference', emergency: true, day_night_plan: 'Free range during the day, crate at night',
+        travel_plan: 'Sister takes the dogs', vet_contact: 'Sample Animal Clinic', food_cost_ok: true,
+        notes: 'Has fostered medical cases before and is comfortable giving medication.', vet_status: 'vetted',
+        vetted_by: 'coordinator@example.org', vetted_at: daysOut(-92) },
+      { id: 'f2', name: 'Marcus Delgado', email: 'sample-marcus@example.com', phone: '(000) 555-0177',
+        city: 'Oak Forest', state: 'TX', zip: '77018', housing: 'House', yard: 'Fenced yard', rent_own: 'own',
+        landlord_ok: null, kids: 'No kids', has_dogs: 'None', has_cats: 'None', other_pets: null,
+        allergies: false, visitor_kids: false, visitor_dogs: false, visitor_cats: false,
+        insurance_restrictions: 'no', foster_count: '1-2', training: 'some', medical_exp: false,
+        behavioral_exp: false, rehomed_before: 'No', alone_hours: '2-4', exercise: 'very active', energy_pref: 4,
+        schedule: 'Very flexible (work from home / retired)', size_pref: 'No preference', gender_pref: 'No preference',
+        age_pref: 'No preference', emergency: false, day_night_plan: 'Crate trained, sleeps in the bedroom',
+        travel_plan: 'Rarely travels', vet_contact: 'Sample Veterinary Group', food_cost_ok: true,
+        notes: 'Runs most mornings and wants a dog who can keep up.', vet_status: 'vetted',
+        vetted_by: 'coordinator@example.org', vetted_at: daysOut(-61) },
+      { id: 'f3', name: 'Priya Raman', email: 'sample-priya@example.com', phone: '(000) 555-0192',
+        city: 'Katy', state: 'TX', zip: '77450', housing: 'Townhouse', yard: 'No yard', rent_own: 'rent',
+        landlord_ok: 'Yes', kids: 'Kids 6–12', has_dogs: 'None', has_cats: 'One or more cats', other_pets: null,
+        allergies: false, visitor_kids: true, visitor_dogs: false, visitor_cats: false,
+        insurance_restrictions: 'no', foster_count: '1-2', training: 'some', medical_exp: false,
+        behavioral_exp: false, rehomed_before: 'No', alone_hours: '6-8', exercise: 'light', energy_pref: 2,
+        schedule: 'Structured (out of home 9–5)', size_pref: 'Small', gender_pref: 'No preference',
+        age_pref: 'Senior (8+ yrs)', emergency: false, day_night_plan: 'Gated in the kitchen during work hours',
+        travel_plan: 'Boarding', vet_contact: 'Sample Pet Hospital', food_cost_ok: false,
+        notes: 'Kids are 8 and 11 and have been asking to foster for a year.', vet_status: 'vetted',
+        vetted_by: 'coordinator@example.org', vetted_at: daysOut(-33) },
+      { id: 'f4', name: 'Dolores Whitfield', email: 'sample-dolores@example.com', phone: '(000) 555-0148',
+        city: 'Pearland', state: 'TX', zip: '77584', housing: 'House', yard: 'Unfenced yard', rent_own: 'own',
+        landlord_ok: null, kids: 'No kids', has_dogs: 'None', has_cats: 'None', other_pets: null,
+        allergies: false, visitor_kids: true, visitor_dogs: false, visitor_cats: false,
+        insurance_restrictions: 'not sure', foster_count: '1-2', training: 'some', medical_exp: false,
+        behavioral_exp: false, rehomed_before: 'No', alone_hours: '0-2', exercise: 'light', energy_pref: 2,
+        schedule: 'Very flexible (work from home / retired)', size_pref: 'Small', gender_pref: 'Female',
+        age_pref: 'Senior (8+ yrs)', emergency: false, day_night_plan: 'Sleeps in a bed in the living room',
+        travel_plan: 'Neighbour looks after her', vet_contact: 'Sample Animal Clinic', food_cost_ok: true,
+        notes: 'Grandchildren visit most weekends. Wants a calm older dog.', vet_status: 'pending',
+        vetted_by: null, vetted_at: null },
+      { id: 'f5', name: 'Theo Brennan', email: 'sample-theo@example.com', phone: '(000) 555-0110',
+        city: 'Montrose', state: 'TX', zip: '77006', housing: 'Apartment', yard: 'No yard', rent_own: 'rent',
+        landlord_ok: 'Not sure', kids: 'No kids', has_dogs: 'None', has_cats: 'None', other_pets: null,
+        allergies: false, visitor_kids: false, visitor_dogs: true, visitor_cats: false,
+        insurance_restrictions: 'not sure', foster_count: '1-2', training: 'some', medical_exp: false,
+        behavioral_exp: false, rehomed_before: 'No', alone_hours: '8+', exercise: 'moderate', energy_pref: 3,
+        schedule: 'Structured (out of home 9–5)', size_pref: 'Medium', gender_pref: 'No preference',
+        age_pref: 'Young (1–3 yrs)', emergency: true, day_night_plan: 'Crated during work hours',
+        travel_plan: 'A friend stays over', vet_contact: null, food_cost_ok: true,
+        notes: 'Still waiting on written confirmation from the building manager.', vet_status: 'pending',
+        vetted_by: null, vetted_at: null }
+    ];
+
+    const SEED_MATCHES = [
+      { id: 'm1', dog_id: 'd5', foster_id: 'f1', status: 'placed' },
+      { id: 'm2', dog_id: 'd6', foster_id: 'f2', status: 'finished' }
+    ];
+
+    let dogsData, fostersData, vaxData, matchesData;
+
+    function resetDemo() {
+      dogsData = JSON.parse(JSON.stringify(SEED_DOGS));
+      fostersData = JSON.parse(JSON.stringify(SEED_FOSTERS));
+      vaxData = JSON.parse(JSON.stringify(SEED_VAX));
+      matchesData = JSON.parse(JSON.stringify(SEED_MATCHES));
+      closeProfile();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===================== MATCHING ENGINE =====================
+    // Same logic as the live system.
+    function hardFilter(dog, f) {
+      const kidsPresent = (f.kids && f.kids !== 'No kids' && f.kids !== 'Teens only') || f.visitor_kids;
+      const dogsPresent = (f.has_dogs && f.has_dogs !== 'None') || f.visitor_dogs;
+      const catsPresent = (f.has_cats && f.has_cats !== 'None') || f.visitor_cats;
+      if (!dog.ok_kids && kidsPresent) return "young kids in the household";
+      if (!dog.ok_cats && catsPresent) return "cats in the household";
+      if (!dog.ok_dogs && dogsPresent) return "other dogs in the household";
+      if (f.allergies) return "household allergies";
+      if (f.landlord_ok === 'No') return "landlord does not allow pets";
+      return null;
+    }
+
+    function softScore(dog, f) {
+      let pts = 0;
+      const energyPref = f.energy_pref || 3;
+      const eDiff = Math.abs((dog.energy || 3) - energyPref);
+      pts += Math.max(0, 15 - eDiff * 5);
+      const aloneMap = { '0-2': 1, '2-4': 3, '4-6': 5, '6-8': 7, '8+': 9 };
+      const fAlone = aloneMap[f.alone_hours] || 5;
+      pts += (fAlone <= (dog.alone_tolerance || 4)) ? 10 : Math.max(0, 10 - (fAlone - dog.alone_tolerance) * 3);
+      pts += 25;
+      const sizeOk = !f.size_pref || f.size_pref === 'No preference' || f.size_pref.toLowerCase() === dog.size;
+      pts += sizeOk ? 12 : 6;
+      pts += 8;
+      const rank = { "first-time": 1, "some": 2, "experienced": 3, "professional": 3 };
+      pts += (rank[f.training] || 1) >= (rank[dog.exp_needed] || 1) ? 15 : 7;
+      const gOk = !f.gender_pref || f.gender_pref === 'No preference' || f.gender_pref[0] === dog.gender;
+      pts += gOk ? 5 : 2;
+      const ageBand = dog.age <= 1 ? "Puppy" : dog.age <= 3 ? "Young" : dog.age <= 8 ? "Adult" : "Senior";
+      const aOk = !f.age_pref || f.age_pref === 'No preference' || f.age_pref.startsWith(ageBand);
+      pts += aOk ? 5 : 2;
+      return Math.min(100, Math.round(pts));
+    }
+
+    function matchesFor(dog) {
+      const threshold = dog.urgency ? 60 : 75;
+      const excluded = [];
+      const list = fostersData
+        .filter(f => f.vet_status === 'vetted')
+        .map(f => {
+          const blocked = hardFilter(dog, f);
+          if (blocked) { excluded.push({ name: f.name, reason: blocked }); return null; }
+          let score = softScore(dog, f);
+          let boosted = false;
+          if (dog.urgency && f.emergency) { score = Math.min(100, score + 5); boosted = true; }
+          return { foster: f, score, boosted };
+        })
+        .filter(m => m && m.score >= threshold)
+        .sort((a, b) => b.score - a.score);
+      return { list, excluded };
+    }
+
+    function fosterForDog(dogId) {
+      const m = matchesData.find(x => x.dog_id === dogId && (x.status === 'placed' || x.status === 'finished'));
+      if (!m) return null;
+      return fostersData.find(f => f.id === m.foster_id) || null;
+    }
+
+    // ===================== ACTIONS (in memory only) =====================
+    function setVetStatus(fosterId, status) {
+      const f = fostersData.find(x => x.id === fosterId);
+      if (!f) return;
+      f.vet_status = status;
+      f.vetted_by = 'coordinator@example.org';
+      f.vetted_at = new Date().toISOString().slice(0, 10);
+      closeProfile();
+      render();
+    }
+
+    function setDogStatus(dogId, status) {
+      const dog = dogsData.find(d => d.id === dogId);
+      if (!dog) return;
+      dog.status = status;
+      if (status === 'adopted' || status === 'available') {
+        matchesData.forEach(m => { if (m.dog_id === dogId && m.status === 'placed') m.status = 'finished'; });
+      }
+      render();
+    }
+
+    const LIFECYCLE = ['matched', 'contacted', 'placed', 'finished'];
+    function advanceMatch(dogId, fosterId, currentStatus) {
+      const next = LIFECYCLE[(LIFECYCLE.indexOf(currentStatus) + 1) % LIFECYCLE.length];
+      const existing = matchesData.find(x => x.dog_id === dogId && x.foster_id === fosterId);
+      if (existing) existing.status = next;
+      else matchesData.push({ id: 'm' + (matchesData.length + 1), dog_id: dogId, foster_id: fosterId, status: next });
+      if (next === 'placed') {
+        const dog = dogsData.find(d => d.id === dogId);
+        if (dog) dog.status = 'placed';
+      }
+      render();
+    }
+
+    // ===================== RENDERING =====================
+    function vaxStatus(expires) {
+      const days = Math.floor((new Date(expires) - TODAY) / 86400000);
+      if (days < 0) return { cls: "vax-expired", label: "EXPIRED " + Math.abs(days) + "d ago" };
+      if (days <= 30) return { cls: "vax-soon", label: "expires in " + days + "d" };
+      return { cls: "vax-ok", label: "current" };
+    }
+
+    function vaxBlock(dogId) {
+      const dogVax = vaxData.filter(v => v.dog_id === dogId);
+      if (!dogVax.length) return '';
+      return `<div class="vax"><div class="vax-title">Vaccinations</div>
+        ${dogVax.map(v => { const s = vaxStatus(v.expires); return `<div class="vax-row"><span style="font-weight:600;">${v.name}</span><span style="color:#6a706a;">${v.expires} · <span class="${s.cls}">${s.label}</span></span></div>`; }).join('')}
+      </div>`;
+    }
+
+    function openProfile(fosterId) {
+      const f = fostersData.find(x => x.id === fosterId);
+      if (!f) return;
+      const history = matchesData
+        .filter(m => m.foster_id === f.id)
+        .map(m => {
+          const dog = dogsData.find(d => d.id === m.dog_id);
+          return dog ? `<div class="ps-line">${dog.name} <span>· ${m.status}</span></div>` : '';
+        }).join('') || '<div class="ps-line"><span>No dog history yet.</span></div>';
+      const vetTag = f.vet_status === 'vetted' ? '<span class="vet-tag vt-vetted">Vetted</span>'
+        : f.vet_status === 'declined' ? '<span class="vet-tag vt-declined">Declined</span>'
+        : '<span class="vet-tag vt-pending">Pending</span>';
+
+      document.getElementById('profile-content').innerHTML = `
+        <h2 style="margin-bottom:4px;">${f.name} ${vetTag}</h2>
+        <p style="font-size:13px; color:#6a706a; margin-bottom:16px;">
+          Signed up with Sample Rescue of Houston${f.vetted_by ? ' · reviewed by ' + f.vetted_by + (f.vetted_at ? ' on ' + f.vetted_at : '') : ''}
+        </p>
+        <div class="profile-section">
+          <div class="ps-title">Contact</div>
+          <div class="ps-line">${f.email} <span>· ${f.phone}</span></div>
+          <div class="ps-line"><span>${f.city}, ${f.state} ${f.zip}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Home</div>
+          <div class="ps-line">${f.housing} <span>· ${f.yard} · ${f.rent_own === 'rent' ? 'Rents (landlord: ' + (f.landlord_ok || '?') + ')' : 'Owns'}</span></div>
+          <div class="ps-line"><span>Insurance restrictions: ${f.insurance_restrictions}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Household</div>
+          <div class="ps-line"><span>Kids: ${f.kids} · Dogs: ${f.has_dogs} · Cats: ${f.has_cats} · Other: ${f.other_pets || 'none'}</span></div>
+          <div class="ps-line"><span>Allergies: ${f.allergies ? 'YES' : 'no'} · Visitors: ${[f.visitor_kids && 'kids', f.visitor_dogs && 'dogs', f.visitor_cats && 'cats'].filter(Boolean).join(', ') || 'none regular'}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Experience &amp; lifestyle</div>
+          <div class="ps-line"><span>Fostered: ${f.foster_count} · Training: ${f.training} · Medical exp: ${f.medical_exp ? 'yes' : 'no'} · Behavioral exp: ${f.behavioral_exp ? 'yes' : 'no'}</span></div>
+          <div class="ps-line"><span>Rehomed before: ${f.rehomed_before}</span></div>
+          <div class="ps-line"><span>Away ${f.alone_hours}h/day · Exercise: ${f.exercise} · Energy pref ${f.energy_pref}/5 · ${f.schedule}</span></div>
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Care plans</div>
+          <div class="ps-line"><span>Day/night: ${f.day_night_plan} · Travel: ${f.travel_plan}</span></div>
+          <div class="ps-line"><span>Vet: ${f.vet_contact || 'not provided'} · Food cost: ${f.food_cost_ok ? 'will provide' : 'ask rescue'}</span></div>
+          ${f.notes ? '<div class="ps-line"><span>Notes: ' + f.notes + '</span></div>' : ''}
+        </div>
+        <div class="profile-section">
+          <div class="ps-title">Dog history</div>
+          ${history}
+        </div>
+        ${f.vet_status === 'pending' ? `
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button class="approve-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+          <button class="decline-btn" style="flex:1;" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
+        </div>` : ''}
+      `;
+      document.getElementById('profile-bg').style.display = 'flex';
+    }
+    function closeProfile() { document.getElementById('profile-bg').style.display = 'none'; }
+
+    function render() {
+      const pending = fostersData.filter(f => f.vet_status === 'pending');
+      const vetted = fostersData.filter(f => f.vet_status === 'vetted');
+      const available = dogsData.filter(d => d.status === 'available');
+      const fostered = dogsData.filter(d => d.status === 'placed');
+      const adopted = dogsData.filter(d => d.status === 'adopted');
+      const vaxAlerts = vaxData.filter(v => {
+        const dog = dogsData.find(d => d.id === v.dog_id);
+        if (dog && dog.status === 'adopted') return false;
+        return Math.floor((new Date(v.expires) - TODAY) / 86400000) <= 30;
+      }).length;
+
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="num">${available.length}</div><div class="label">Available</div></div>
+        <div class="stat"><div class="num">${fostered.length}</div><div class="label">In foster</div></div>
+        <div class="stat"><div class="num">${vetted.length}</div><div class="label">Vetted fosters</div></div>
+        <div class="stat"><div class="num">${pending.length}</div><div class="label">Pending review</div></div>
+        <div class="stat"><div class="num">${vaxAlerts}</div><div class="label">Vax alerts</div></div>`;
+
+      document.getElementById("pending").innerHTML = pending.length === 0
+        ? `<div class="empty-state">No pending foster signups. New signups from the website appear here for review.</div>`
+        : pending.map(f => `
+          <div class="pending-card">
+            <div class="dog-head">
+              <div>
+                <div class="dog-name" style="font-size:16px;"><span class="foster-link" onclick="openProfile('${f.id}')">${f.name}</span></div>
+                <div class="pending-info">
+                  <strong>Sample Rescue of Houston</strong> · ${f.city}, ${f.state} · ${f.housing}<br>
+                  Kids: ${f.kids} · Dogs: ${f.has_dogs} · Cats: ${f.has_cats} · Allergies: ${f.allergies ? 'YES' : 'no'}<br>
+                  <span style="color:#8a908a;">Click the name for the full profile</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="approve-btn" onclick="setVetStatus('${f.id}', 'vetted')">Approve</button>
+                <button class="decline-btn" onclick="setVetStatus('${f.id}', 'declined')">Decline</button>
+              </div>
+            </div>
+          </div>`).join('');
+
+      document.getElementById("dogs-available").innerHTML = available.length === 0
+        ? `<div class="empty-state">No available dogs right now.</div>`
+        : available.map(dog => {
+          const res = matchesFor(dog);
+          return `
+          <div class="dog-card">
+            <div class="dog-head">
+              <div>
+                <div class="dog-name">${dog.name}</div>
+                <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age} · energy ${dog.energy}/5 · ok alone ${dog.alone_tolerance}h · needs ${dog.exp_needed} foster</div>
+                <div class="dog-bio">${dog.bio}</div>
+              </div>
+              <span class="badge ${dog.urgency ? "urgent" : "standard"}">${dog.urgency ? "URGENT — " + dog.urgency : "Standard"}</span>
+            </div>
+            ${vaxBlock(dog.id)}
+            <div class="matches">
+              <div class="matches-label">Matches above ${dog.urgency ? 60 : 75}% (vetted fosters only)</div>
+              ${res.list.length === 0
+                ? `<div class="no-match">No vetted fosters above the threshold yet.${res.excluded.map(e => `<span class="why">${e.name} ruled out — ${e.reason}</span>`).join('')}</div>`
+                : res.list.map(m => {
+                  const saved = matchesData.find(x => x.dog_id === dog.id && x.foster_id === m.foster.id);
+                  const st = saved ? saved.status : 'matched';
+                  const cls = { matched:'lc-matched', contacted:'lc-contacted', placed:'lc-placed', finished:'lc-finished' }[st];
+                  return `
+                  <div class="match-row">
+                    <div class="match-info">
+                      <div class="fname"><span class="foster-link" onclick="openProfile('${m.foster.id}')">${m.foster.name}</span> ${m.boosted ? '<span class="boost-tag">+5 emergency</span>' : ""}</div>
+                      <div class="fdetail">${m.foster.city}, ${m.foster.state} · ${m.foster.housing} · ${m.foster.training} · away ${m.foster.alone_hours}h/day</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <span class="score ${m.score >= 80 ? "high" : "mid"}">${m.score}</span>
+                      <button class="lifecycle ${cls}" onclick="advanceMatch('${dog.id}','${m.foster.id}','${st}')">${st[0].toUpperCase() + st.slice(1)}</button>
+                    </div>
+                  </div>`;
+                }).join('')}
+            </div>
+          </div>`;
+        }).join('');
+
+      document.getElementById("dogs-fostered").innerHTML = fostered.length === 0
+        ? `<div class="empty-state">No dogs currently in foster homes.</div>`
+        : fostered.map(dog => {
+          const f = fosterForDog(dog.id);
+          return `
+          <div class="dog-card fostered">
+            <div class="dog-head">
+              <div>
+                <div class="dog-name">${dog.name}</div>
+                <div class="dog-meta">${dog.size} · ${dog.gender} · age ${dog.age}</div>
+                <div class="foster-with">🏠 In foster with ${f ? `<span class="foster-link" onclick="openProfile('${f.id}')">${f.name}</span> · ${f.city}, ${f.state}` : 'unknown'}</div>
+                <div class="dog-bio">${dog.bio}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                <span class="badge infoster">In foster</span>
+                <div style="display:flex; gap:6px;">
+                  <button class="action-btn" onclick="setDogStatus('${dog.id}','available')">Mark returned</button>
+                  <button class="action-btn dark" onclick="setDogStatus('${dog.id}','adopted')">Mark adopted</button>
+                </div>
+              </div>
+            </div>
+            ${vaxBlock(dog.id)}
+          </div>`;
+        }).join('');
+
+      document.getElementById("dogs-adopted").innerHTML = adopted.length === 0
+        ? `<div class="empty-state">No adoptions recorded yet. They'll live here forever when they happen. 🎉</div>`
+        : adopted.map(dog => {
+          const f = fosterForDog(dog.id);
+          return `
+          <div class="adopted-row">
+            <div>
+              <span class="aname">${dog.name}</span>
+              <span class="adetail"> · ${dog.size} · ${dog.gender} · age ${dog.age}${f ? ` · adopted via <span class="foster-link" onclick="openProfile('${f.id}')">${f.name}</span>` : ''}</span>
+            </div>
+            <span class="badge" style="background:#2a2e2a; color:#faf8f2;">Adopted 🎉</span>
+          </div>`;
+        }).join('');
+    }
+
+    resetDemo();
+  </script>
+</body>
+</html>
